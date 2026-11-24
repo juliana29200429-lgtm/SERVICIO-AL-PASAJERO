@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LATAM Airlines - DCS & Control de Seguridad AVSEC</title>
+    <title>LATAM Airlines - DCS & AVSEC Security Control</title>
     <style>
         :root {
             --latam-indigo: #1B0088;
@@ -52,6 +52,7 @@
             display: flex;
             align-items: center;
             gap: 15px;
+            flex-wrap: wrap;
         }
 
         .brand-logo {
@@ -76,9 +77,16 @@
             border: 1px solid rgba(255, 255, 255, 0.25);
         }
 
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
         .nav-tabs {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             flex-wrap: wrap;
         }
 
@@ -86,15 +94,15 @@
             background: rgba(255, 255, 255, 0.12);
             color: var(--white);
             border: none;
-            padding: 10px 18px;
+            padding: 10px 16px;
             border-radius: 8px;
-            font-size: 0.92rem;
+            font-size: 0.9rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s ease;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
 
         .tab-btn:hover {
@@ -105,6 +113,32 @@
             background: var(--latam-coral);
             color: var(--white);
             box-shadow: 0 4px 10px rgba(237, 22, 80, 0.4);
+        }
+
+        .lang-switcher {
+            display: flex;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 8px;
+            padding: 3px;
+            gap: 4px;
+        }
+
+        .lang-btn {
+            background: transparent;
+            color: rgba(255, 255, 255, 0.75);
+            border: none;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 0.82rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .lang-btn.active {
+            background: var(--white);
+            color: var(--latam-indigo);
         }
 
         main {
@@ -729,18 +763,24 @@
     <header>
         <div class="brand">
             <div class="brand-logo">✈️ LATAM <span>AIRLINES</span></div>
-            <div class="flight-badge">VUELO LA 4286 | BOG ➔ PSO (Pasto)</div>
+            <div class="flight-badge" id="flightBadgeText">VUELO LA 4286 | BOG ➔ PSO (Pasto)</div>
         </div>
-        <div class="nav-tabs">
-            <button type="button" class="tab-btn active" onclick="irAPestana('checkin')">
-                🛂 1. Counter & Check-in
-            </button>
-            <button type="button" class="tab-btn" id="btnTabBoarding" onclick="irAPestana('boarding')">
-                🎟️ 2. Boarding Pass
-            </button>
-            <button type="button" class="tab-btn" onclick="irAPestana('avsec')">
-                🛡️ 3. Filtro Seguridad & Rayos X (AVSEC)
-            </button>
+        <div class="header-controls">
+            <div class="nav-tabs">
+                <button type="button" class="tab-btn active" id="tabBtnCheckin" onclick="irAPestana('checkin')">
+                    🛂 1. Counter & Check-in
+                </button>
+                <button type="button" class="tab-btn" id="tabBtnBoarding" onclick="irAPestana('boarding')">
+                    🎟️ 2. Boarding Pass
+                </button>
+                <button type="button" class="tab-btn" id="tabBtnAvsec" onclick="irAPestana('avsec')">
+                    🛡️ 3. Filtro Seguridad & Rayos X (AVSEC)
+                </button>
+            </div>
+            <div class="lang-switcher" title="Cambiar idioma / Change language">
+                <button type="button" class="lang-btn active" id="btnLangEs" onclick="cambiarIdioma('es')">🇨🇴 ES</button>
+                <button type="button" class="lang-btn" id="btnLangEn" onclick="cambiarIdioma('en')">🇺🇸 EN</button>
+            </div>
         </div>
     </header>
 
@@ -753,53 +793,53 @@
                 <!-- PASO 1 -->
                 <div class="card">
                     <div class="card-title">
-                        <span>🪪 1. Verificación de Documentos e Identidad</span>
-                        <span class="step-badge">PASO 1</span>
+                        <span id="step1Title">🪪 1. Verificación de Documentos e Identidad</span>
+                        <span class="step-badge" id="step1Badge">PASO 1</span>
                     </div>
 
                     <div class="form-grid">
                         <div class="form-group">
-                            <label>Nombre Completo del Pasajero *</label>
+                            <label id="lblPaxName">Nombre Completo del Pasajero *</label>
                             <input type="text" id="paxName" placeholder="Ej: Juliana Bayona Peña">
                         </div>
                         <div class="form-group">
-                            <label>Tipo y Número de Documento *</label>
+                            <label id="lblDocType">Tipo y Número de Documento *</label>
                             <select id="docType" style="margin-bottom: 4px;">
-                                <option value="CC">Cédula de Ciudadanía (CC)</option>
-                                <option value="TI">Tarjeta de Identidad (TI - Menor 7-17 años)</option>
-                                <option value="RC">Registro Civil (RC - Menor 0-6 años)</option>
-                                <option value="PA">Pasaporte / Cédula Extranjería</option>
+                                <option value="CC" id="optDocCC">Cédula de Ciudadanía (CC)</option>
+                                <option value="TI" id="optDocTI">Tarjeta de Identidad (TI - Menor 7-17 años)</option>
+                                <option value="RC" id="optDocRC">Registro Civil (RC - Menor 0-6 años)</option>
+                                <option value="PA" id="optDocPA">Pasaporte / Cédula Extranjería</option>
                             </select>
                             <input type="text" id="paxDoc" placeholder="Número ej: 1.019.981.300">
                         </div>
                         <div class="form-group">
-                            <label>Código de Reserva (PNR)</label>
+                            <label id="lblPnr">Código de Reserva (PNR)</label>
                             <input type="text" id="paxPnr" value="LTM89X" maxlength="6" style="text-transform: uppercase;">
                         </div>
                         <div class="form-group">
-                            <label>Silla Asignada</label>
+                            <label id="lblSeat">Silla Asignada</label>
                             <select id="paxSeat">
-                                <option value="04A (Ventana - Premium)">04A (Ventana - Premium)</option>
-                                <option value="08C (Pasillo)">08C (Pasillo)</option>
-                                <option value="12F (Ventana)">12F (Ventana)</option>
-                                <option value="14B (Centro)">14B (Centro)</option>
-                                <option value="16A (Salida Emergencia)">16A (Salida Emergencia)</option>
-                                <option value="21D (Pasillo)">21D (Pasillo)</option>
+                                <option value="04A (Ventana - Premium)" id="optSeat1">04A (Ventana - Premium)</option>
+                                <option value="08C (Pasillo)" id="optSeat2">08C (Pasillo)</option>
+                                <option value="12F (Ventana)" id="optSeat3">12F (Ventana)</option>
+                                <option value="14B (Centro)" id="optSeat4">14B (Centro)</option>
+                                <option value="16A (Salida Emergencia)" id="optSeat5">16A (Salida Emergencia)</option>
+                                <option value="21D (Pasillo)" id="optSeat6">21D (Pasillo)</option>
                             </select>
                         </div>
                     </div>
 
                     <div class="check-box-group">
-                        <label style="color: var(--latam-indigo); display:block; margin-bottom:6px;">
+                        <label id="lblAgentDocCheck" style="color: var(--latam-indigo); display:block; margin-bottom:6px;">
                             ✔️ Validación Documental del Agente:
                         </label>
                         <div class="check-item">
                             <input type="checkbox" id="docCheck1" checked>
-                            <span>Documento físico original en buen estado y fotografía coincide con el pasajero.</span>
+                            <span id="txtDocCheck1">Documento físico original en buen estado y fotografía coincide con el pasajero.</span>
                         </div>
                         <div class="check-item">
                             <input type="checkbox" id="docCheck2" checked>
-                            <span>Nombres y apellidos coinciden exactamente con la reserva del vuelo LA 4286 (BOG-PSO).</span>
+                            <span id="txtDocCheck2">Nombres y apellidos coinciden exactamente con la reserva del vuelo LA 4286 (BOG-PSO).</span>
                         </div>
                     </div>
                 </div>
@@ -807,20 +847,20 @@
                 <!-- PASO 2 -->
                 <div class="card">
                     <div class="card-title">
-                        <span>♿🐾👶 2. Servicios Especiales (SSR) y Perfil del Pasajero</span>
-                        <span class="step-badge">PASO 2</span>
+                        <span id="step2Title">♿🐾👶 2. Servicios Especiales (SSR) y Perfil del Pasajero</span>
+                        <span class="step-badge" id="step2Badge">PASO 2</span>
                     </div>
 
                     <div class="form-group">
-                        <label>Seleccione si el pasajero requiere atención o protocolo especial:</label>
+                        <label id="lblSsrSelect">Seleccione si el pasajero requiere atención o protocolo especial:</label>
                         <select id="ssrType" onchange="actualizarSSR()">
-                            <option value="NONE">Pasajero Estándar (Sin requerimientos especiales)</option>
-                            <option value="MINOR_ACC">👶 Menor de Edad Acompañado (Con padres / familiar)</option>
-                            <option value="UMNR">🧒 Menor Sin Acompañar (Servicio UMNR - 5 a 17 años)</option>
-                            <option value="PETC">🐶 Mascota en Cabina (PETC - Perro o Gato pequeño)</option>
-                            <option value="AVIH">🐕‍🦺 Mascota en Bodega (AVIH - Guacal rígido)</option>
-                            <option value="WCHR">♿ Movilidad Reducida / Silla de Ruedas (WCHR)</option>
-                            <option value="MEDA">🤰 Embarazada / Condición Médica o Sensorial (TEA/Visual)</option>
+                            <option value="NONE" id="optSsrNone">Pasajero Estándar (Sin requerimientos especiales)</option>
+                            <option value="MINOR_ACC" id="optSsrMinor">👶 Menor de Edad Acompañado (Con padres / familiar)</option>
+                            <option value="UMNR" id="optSsrUmnr">🧒 Menor Sin Acompañar (Servicio UMNR - 5 a 17 años)</option>
+                            <option value="PETC" id="optSsrPetc">🐶 Mascota en Cabina (PETC - Perro o Gato pequeño)</option>
+                            <option value="AVIH" id="optSsrAvih">🐕‍🦺 Mascota en Bodega (AVIH - Guacal rígido)</option>
+                            <option value="WCHR" id="optSsrWchr">♿ Movilidad Reducida / Silla de Ruedas (WCHR)</option>
+                            <option value="MEDA" id="optSsrMeda">🤰 Embarazada / Condición Médica o Sensorial (TEA/Visual)</option>
                         </select>
                     </div>
 
@@ -835,23 +875,23 @@
                 <!-- PASO 3 -->
                 <div class="card">
                     <div class="card-title">
-                        <span>🧳 3. Recepción, Pesaje de Equipaje y Seguridad DGR</span>
-                        <span class="step-badge">PASO 3</span>
+                        <span id="step3Title">🧳 3. Recepción, Pesaje de Equipaje y Seguridad DGR</span>
+                        <span class="step-badge" id="step3Badge">PASO 3</span>
                     </div>
 
                     <div class="form-grid">
                         <div class="form-group">
-                            <label>Tipo de Artículo a Registrar en Bodega</label>
+                            <label id="lblBagType">Tipo de Artículo a Registrar en Bodega</label>
                             <select id="bagType" onchange="actualizarEquipaje()">
-                                <option value="Maleta Estándar">🧳 Maleta de Bodega Estándar</option>
-                                <option value="Sin Equipaje Bodega">🎒 Solo Equipaje de Mano (0 Piezas)</option>
-                                <option value="Equipaje Frágil / Caja">📦 Caja / Artículo Frágil (Etiqueta FRÁGIL)</option>
-                                <option value="Coche Bebé / Silla Ruedas">👶♿ Coche de Bebé / Silla de Ruedas (Sin costo)</option>
-                                <option value="Equipaje Deportivo / Musical">🎸 Instrumento Musical / Eq. Deportivo</option>
+                                <option value="Maleta Estándar" id="optBagStd">🧳 Maleta de Bodega Estándar</option>
+                                <option value="Sin Equipaje Bodega" id="optBagNone">🎒 Solo Equipaje de Mano (0 Piezas)</option>
+                                <option value="Equipaje Frágil / Caja" id="optBagFragile">📦 Caja / Artículo Frágil (Etiqueta FRÁGIL)</option>
+                                <option value="Coche Bebé / Silla Ruedas" id="optBagAssist">👶♿ Coche de Bebé / Silla de Ruedas (Sin costo)</option>
+                                <option value="Equipaje Deportivo / Musical" id="optBagSport">🎸 Instrumento Musical / Eq. Deportivo</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label>Peso Registrado en Báscula (kg)</label>
+                            <label id="lblBagWeight">Peso Registrado en Báscula (kg)</label>
                             <input type="number" id="bagWeight" value="15" min="0" max="50" oninput="actualizarEquipaje()">
                         </div>
                     </div>
@@ -859,29 +899,29 @@
                     <div id="bagAlert" class="baggage-status ok">✅ Peso permitido en franquicia (15 kg ≤ 23 kg).</div>
                     
                     <div class="bag-tag-preview" id="bagTagPreview">
-                        <span id="bagTagCode">🏷️ BAG TAG: LA-4120-88412</span>
+                        <span id="bagTagCode">🏷️ BAG TAG: LA-4286-88412</span>
                         <span id="bagTagType">MALETA ESTÁNDAR | 15 KG</span>
                     </div>
 
                     <div class="check-box-group" style="margin-top: 12px;">
-                        <label style="color: var(--latam-coral); display:block; margin-bottom:6px;">
+                        <label id="lblDgrTitle" style="color: var(--latam-coral); display:block; margin-bottom:6px;">
                             ⚠️ Declaración Obligatoria de Mercancías Peligrosas (IATA DGR):
                         </label>
                         <div class="check-item">
                             <input type="checkbox" id="q1" checked>
-                            <span>¿Empacó usted mismo su equipaje y estuvo bajo su control todo el tiempo?</span>
+                            <span id="txtQ1">¿Empacó usted mismo su equipaje y estuvo bajo su control todo el tiempo?</span>
                         </div>
                         <div class="check-item">
                             <input type="checkbox" id="q2" checked>
-                            <span>¿Confirma que NO lleva baterías de litio sueltas, power banks ni vapeadores en bodega?</span>
+                            <span id="txtQ2">¿Confirma que NO lleva baterías de litio sueltas, power banks ni vapeadores en bodega?</span>
                         </div>
                         <div class="check-item">
                             <input type="checkbox" id="q3" checked>
-                            <span>¿Confirma que no lleva aerosoles inflamables, explosivos, gases ni armas?</span>
+                            <span id="txtQ3">¿Confirma que no lleva aerosoles inflamables, explosivos, gases ni armas?</span>
                         </div>
                     </div>
 
-                    <button type="button" class="btn btn-primary" onclick="emitirPaseDeAbordar()">
+                    <button type="button" class="btn btn-primary" id="btnEmitirBp" onclick="emitirPaseDeAbordar()">
                         🎫 Finalizar Registro y Emitir Pase de Abordar
                     </button>
                 </div>
@@ -895,10 +935,10 @@
             <div class="grid-2">
                 <div class="card coral-top">
                     <div class="card-title">
-                        <span>🎟️ Boarding Pass / Pase de Abordar</span>
+                        <span id="bpCardTitle">🎟️ Boarding Pass / Pase de Abordar</span>
                         <div style="display:flex; gap:8px;">
-                            <button type="button" class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="nuevoPasajero()">➕ Nuevo Pasajero</button>
-                            <button type="button" class="btn btn-outline" style="padding: 6px 12px; font-size: 0.8rem;" onclick="window.print()">🖨️ Imprimir</button>
+                            <button type="button" class="btn btn-secondary" id="btnNewPax" style="padding: 6px 12px; font-size: 0.8rem;" onclick="nuevoPasajero()">➕ Nuevo Pasajero</button>
+                            <button type="button" class="btn btn-outline" id="btnPrintBp" style="padding: 6px 12px; font-size: 0.8rem;" onclick="window.print()">🖨️ Imprimir</button>
                         </div>
                     </div>
 
@@ -908,7 +948,7 @@
                                 <strong style="font-size: 1.3rem; letter-spacing: 1px;">LATAM</strong>
                                 <div style="font-size: 0.78rem; opacity: 0.85;">BOARDING PASS / PASE DE ABORDAR</div>
                             </div>
-                            <span class="tag">DOMÉSTICO</span>
+                            <span class="tag" id="bpTagDomestic">DOMÉSTICO</span>
                         </div>
                         <div class="bp-body">
                             <div class="bp-route">
@@ -925,49 +965,49 @@
 
                             <div class="bp-grid">
                                 <div style="grid-column: 1 / 3;">
-                                    <div class="bp-label">Pasajero / Passenger</div>
+                                    <div class="bp-label" id="bpLblPax">Pasajero / Passenger</div>
                                     <div class="bp-value" id="bpName">PASAJERO DE PRUEBA</div>
                                 </div>
                                 <div>
-                                    <div class="bp-label">Documento</div>
+                                    <div class="bp-label" id="bpLblDoc">Documento / ID</div>
                                     <div class="bp-value" id="bpDoc">CC 00000000</div>
                                 </div>
                                 <div>
-                                    <div class="bp-label">Vuelo / Flight</div>
+                                    <div class="bp-label" id="bpLblFlight">Vuelo / Flight</div>
                                     <div class="bp-value">LA 4286</div>
                                 </div>
                                 <div>
-                                    <div class="bp-label">Puerta / Gate</div>
+                                    <div class="bp-label" id="bpLblGate">Puerta / Gate</div>
                                     <div class="bp-value">D14</div>
                                 </div>
                                 <div>
-                                    <div class="bp-label">Asiento / Seat</div>
+                                    <div class="bp-label" id="bpLblSeat">Asiento / Seat</div>
                                     <div class="bp-value highlight" id="bpSeat">04A</div>
                                 </div>
                                 <div>
-                                    <div class="bp-label">Atención / SSR</div>
+                                    <div class="bp-label" id="bpLblSsr">Atención / SSR</div>
                                     <div class="bp-value"><span class="ssr-badge-bp" id="bpSsr">ESTÁNDAR</span></div>
                                 </div>
                                 <div>
-                                    <div class="bp-label">Equipaje Bodega</div>
+                                    <div class="bp-label" id="bpLblBag">Equipaje / Baggage</div>
                                     <div class="bp-value" id="bpBag">1 PC / 15 KG</div>
                                 </div>
                                 <div>
-                                    <div class="bp-label">Reserva / PNR</div>
+                                    <div class="bp-label" id="bpLblPnr">Reserva / PNR</div>
                                     <div class="bp-value" id="bpPnr">LTM89X</div>
                                 </div>
                             </div>
 
                             <div id="bpCabinNotesSection" style="background: #F8FAFC; border-top: 1px dashed #CBD5E1; padding-top: 10px; margin-top: 10px; font-size: 0.85rem; display: none;">
-                                <strong style="color: var(--latam-indigo);">👩‍✈️ NOTAS PARA TRIPULACIÓN DE CABINA:</strong>
+                                <strong id="bpCabinNotesHeader" style="color: var(--latam-indigo);">👩‍✈️ NOTAS PARA TRIPULACIÓN DE CABINA:</strong>
                                 <div id="bpCabinNotesText" style="color: #334155; margin-top: 3px;"></div>
                             </div>
                         </div>
                         <div class="bp-footer">
                             <div class="barcode"></div>
                             <div style="text-align: right; font-size: 0.78rem; color: var(--text-muted);">
-                                <strong id="bpTagFooter">TAG: LA-4120-88412</strong><br>
-                                Diríjase al filtro de seguridad AVSEC
+                                <strong id="bpTagFooter">TAG: LA-4286-88412</strong><br>
+                                <span id="bpFooterHint">Diríjase al filtro de seguridad AVSEC</span>
                             </div>
                         </div>
                     </div>
@@ -976,24 +1016,24 @@
                 <!-- MANIFIESTO INTERACTIVO -->
                 <div class="card">
                     <div class="card-title">
-                        <span>📊 Pasajeros Chequeados (Clic para ver Pase)</span>
+                        <span id="manifestTitle">📊 Pasajeros Chequeados (Clic para ver Pase)</span>
                         <span id="paxCount" style="background: var(--latam-indigo); color: white; padding: 3px 12px; border-radius: 12px; font-size: 0.85rem;">0</span>
                     </div>
-                    <p style="font-size: 0.84rem; color: var(--text-muted); margin-bottom: 8px;">
+                    <p id="manifestSub" style="font-size: 0.84rem; color: var(--text-muted); margin-bottom: 8px;">
                         Haz clic sobre cualquier pasajero registrado para proyectar o imprimir su pase de abordar.
                     </p>
                     <table class="pax-table">
                         <thead>
                             <tr>
-                                <th>Pasajero</th>
-                                <th>SSR</th>
-                                <th>Silla</th>
-                                <th>Equipaje</th>
+                                <th id="thPax">Pasajero</th>
+                                <th id="thSsr">SSR</th>
+                                <th id="thSeat">Silla</th>
+                                <th id="thBag">Equipaje</th>
                             </tr>
                         </thead>
                         <tbody id="paxListBody">
                             <tr>
-                                <td colspan="4" style="text-align:center; color: var(--text-muted);">Aún no hay pasajeros registrados</td>
+                                <td colspan="4" id="emptyPaxRow" style="text-align:center; color: var(--text-muted);">Aún no hay pasajeros registrados</td>
                             </tr>
                         </tbody>
                     </table>
@@ -1008,10 +1048,10 @@
             <div class="grid-2">
                 <div class="card coral-top">
                     <div class="card-title">
-                        <span>🔍 Consola de Inspección (Rayos X y Revisión Manual)</span>
+                        <span id="avsecConsoleTitle">🔍 Consola de Inspección (Rayos X y Revisión Manual)</span>
                     </div>
 
-                    <label style="margin-bottom: 6px; display: block;">1. Seleccione dónde se detectó el artículo:</label>
+                    <label id="lblScanStep1" style="margin-bottom: 6px; display: block;">1. Seleccione dónde se detectó el artículo:</label>
                     <div class="scanner-mode-selector">
                         <div class="mode-pill active" id="modeCabin" onclick="cambiarModoEscanner('cabin')">
                             🎒 Equipaje de Mano (Cabina)
@@ -1024,74 +1064,74 @@
                         </div>
                     </div>
 
-                    <label style="margin-bottom: 8px; display: block;">2. Haga clic en el objeto detectado en la revisión:</label>
+                    <label id="lblScanStep2" style="margin-bottom: 8px; display: block;">2. Haga clic en el objeto detectado en la revisión:</label>
                     <div class="items-grid">
                         <button type="button" class="scan-item-btn" onclick="inspeccionarObjeto('liquids_ok')">
                             <span class="icon">🧴</span>
-                            <span class="name">Líquidos ≤ 100 ml</span>
-                            <span class="sub">En bolsa transparente</span>
+                            <span class="name" id="it_liq_ok_n">Líquidos ≤ 100 ml</span>
+                            <span class="sub" id="it_liq_ok_s">En bolsa transparente</span>
                         </button>
                         <button type="button" class="scan-item-btn" onclick="inspeccionarObjeto('liquids_big')">
                             <span class="icon">🍾</span>
-                            <span class="name">Líquidos > 100 ml</span>
-                            <span class="sub">Botella agua / Perfume</span>
+                            <span class="name" id="it_liq_big_n">Líquidos > 100 ml</span>
+                            <span class="sub" id="it_liq_big_s">Botella agua / Perfume</span>
                         </button>
                         <button type="button" class="scan-item-btn" onclick="inspeccionarObjeto('powerbank')">
                             <span class="icon">🔋</span>
-                            <span class="name">Power Bank / Litio</span>
-                            <span class="sub">Batería externa / Vape</span>
+                            <span class="name" id="it_pb_n">Power Bank / Litio</span>
+                            <span class="sub" id="it_pb_s">Batería externa / Vape</span>
                         </button>
                         <button type="button" class="scan-item-btn" onclick="inspeccionarObjeto('laptop')">
                             <span class="icon">💻</span>
-                            <span class="name">Laptop / Tablet</span>
-                            <span class="sub">Electrónico grande</span>
+                            <span class="name" id="it_lap_n">Laptop / Tablet</span>
+                            <span class="sub" id="it_lap_s">Electrónico grande</span>
                         </button>
                         <button type="button" class="scan-item-btn" onclick="inspeccionarObjeto('scissors_small')">
                             <span class="icon">✂️</span>
-                            <span class="name">Tijeras / Cortauñas</span>
-                            <span class="sub">Hoja &lt; 6 cm vs &gt; 6 cm</span>
+                            <span class="name" id="it_sci_n">Tijeras / Cortauñas</span>
+                            <span class="sub" id="it_sci_s">Hoja &lt; 6 cm vs &gt; 6 cm</span>
                         </button>
                         <button type="button" class="scan-item-btn" onclick="inspeccionarObjeto('knife')">
                             <span class="icon">🔪</span>
-                            <span class="name">Navaja / Cuchillo</span>
-                            <span class="sub">Arma blanca / Bisturí</span>
+                            <span class="name" id="it_kni_n">Navaja / Cuchillo</span>
+                            <span class="sub" id="it_kni_s">Arma blanca / Bisturí</span>
                         </button>
                         <button type="button" class="scan-item-btn" onclick="inspeccionarObjeto('aerosol_flam')">
                             <span class="icon">🧯</span>
-                            <span class="name">Aerosol Inflamable</span>
-                            <span class="sub">Gas pimienta / Pintura</span>
+                            <span class="name" id="it_aer_n">Aerosol Inflamable</span>
+                            <span class="sub" id="it_aer_s">Gas pimienta / Pintura</span>
                         </button>
                         <button type="button" class="scan-item-btn" onclick="inspeccionarObjeto('lighter')">
                             <span class="icon">🔥</span>
-                            <span class="name">Encendedor / Fósforos</span>
-                            <span class="sub">Fuego / Combustible</span>
+                            <span class="name" id="it_lig_n">Encendedor / Fósforos</span>
+                            <span class="sub" id="it_lig_s">Fuego / Combustible</span>
                         </button>
                         <button type="button" class="scan-item-btn" onclick="inspeccionarObjeto('tools')">
                             <span class="icon">🔧</span>
-                            <span class="name">Herramientas</span>
-                            <span class="sub">Destornillador / Martillo</span>
+                            <span class="name" id="it_too_n">Herramientas</span>
+                            <span class="sub" id="it_too_s">Destornillador / Martillo</span>
                         </button>
                         <button type="button" class="scan-item-btn" onclick="inspeccionarObjeto('metal_pocket')">
                             <span class="icon">🔑</span>
-                            <span class="name">Llaves / Monedas / Correa</span>
-                            <span class="sub">Metal inofensivo</span>
+                            <span class="name" id="it_met_n">Llaves / Monedas / Correa</span>
+                            <span class="sub" id="it_met_s">Metal inofensivo</span>
                         </button>
                         <button type="button" class="scan-item-btn" onclick="inspeccionarObjeto('toy_gun')">
                             <span class="icon">🔫</span>
-                            <span class="name">Réplica de Arma</span>
-                            <span class="sub">Juguete o fogueo</span>
+                            <span class="name" id="it_toy_n">Réplica de Arma</span>
+                            <span class="sub" id="it_toy_s">Juguete o fogueo</span>
                         </button>
                         <button type="button" class="scan-item-btn" onclick="inspeccionarObjeto('clean')">
                             <span class="icon">✅</span>
-                            <span class="name">Sin Novedad</span>
-                            <span class="sub">Equipaje / Persona limpia</span>
+                            <span class="name" id="it_cle_n">Sin Novedad</span>
+                            <span class="sub" id="it_cle_s">Equipaje / Persona limpia</span>
                         </button>
                     </div>
                 </div>
 
                 <div class="xray-screen">
                     <div class="xray-header">
-                        <span>SISTEMA AVSEC - AEROPUERTO EL DORADO (BOG)</span>
+                        <span id="xraySysTitle">SISTEMA AVSEC - AEROPUERTO EL DORADO (BOG)</span>
                         <span id="currentModeLabel">MODO: EQUIPAJE DE MANO</span>
                     </div>
 
@@ -1105,11 +1145,11 @@
 
                     <div style="margin-top: 1.5rem;">
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
-                            <span style="font-size: 0.85rem; font-weight: 700; color: #5BC0BE;">📑 BITÁCORA DE NOVEDADES DE SEGURIDAD</span>
-                            <button type="button" onclick="limpiarBitacora()" style="background:none; border:1px solid #5BC0BE; color:#5BC0BE; padding:2px 8px; border-radius:4px; font-size:0.75rem; cursor:pointer;">Limpiar</button>
+                            <span id="logHeaderTitle" style="font-size: 0.85rem; font-weight: 700; color: #5BC0BE;">📑 BITÁCORA DE NOVEDADES DE SEGURIDAD</span>
+                            <button type="button" id="btnClearLogs" onclick="limpiarBitacora()" style="background:none; border:1px solid #5BC0BE; color:#5BC0BE; padding:2px 8px; border-radius:4px; font-size:0.75rem; cursor:pointer;">Limpiar</button>
                         </div>
                         <div class="log-list" id="securityLogs">
-                            <div style="color: #6E7A94; font-style: italic; font-size: 0.82rem;">No se han registrado inspecciones todavía...</div>
+                            <div id="emptyLogMsg" style="color: #6E7A94; font-style: italic; font-size: 0.82rem;">No se han registrado inspecciones todavía...</div>
                         </div>
                     </div>
                 </div>
@@ -1118,8 +1158,211 @@
     </main>
 
     <script>
+        var currentLang = 'es';
         var listaPasajeros = [];
         var modoEscannerActual = 'cabin';
+
+        // --- DICCIONARIO BILINGÜE ES / EN ---
+        var i18n = {
+            es: {
+                flightBadge: 'VUELO LA 4286 | BOG ➔ PSO (Pasto)',
+                tabCheckin: '🛂 1. Counter & Check-in',
+                tabBoarding: '🎟️ 2. Boarding Pass',
+                tabAvsec: '🛡️ 3. Filtro Seguridad & Rayos X (AVSEC)',
+                step1Title: '🪪 1. Verificación de Documentos e Identidad',
+                step1Badge: 'PASO 1',
+                lblPaxName: 'Nombre Completo del Pasajero *',
+                phPaxName: 'Ej: Juliana Bayona Peña',
+                lblDocType: 'Tipo y Número de Documento *',
+                optDocCC: 'Cédula de Ciudadanía (CC)',
+                optDocTI: 'Tarjeta de Identidad (TI - Menor 7-17 años)',
+                optDocRC: 'Registro Civil (RC - Menor 0-6 años)',
+                optDocPA: 'Pasaporte / Cédula Extranjería',
+                phPaxDoc: 'Número ej: 1.019.981.300',
+                lblPnr: 'Código de Reserva (PNR)',
+                lblSeat: 'Silla Asignada',
+                optSeat1: '04A (Ventana - Premium)',
+                optSeat2: '08C (Pasillo)',
+                optSeat3: '12F (Ventana)',
+                optSeat4: '14B (Centro)',
+                optSeat5: '16A (Salida Emergencia)',
+                optSeat6: '21D (Pasillo)',
+                lblAgentDocCheck: '✔️ Validación Documental del Agente:',
+                txtDocCheck1: 'Documento físico original en buen estado y fotografía coincide con el pasajero.',
+                txtDocCheck2: 'Nombres y apellidos coinciden exactamente con la reserva del vuelo LA 4286 (BOG-PSO).',
+                step2Title: '♿🐾👶 2. Servicios Especiales (SSR) y Perfil del Pasajero',
+                step2Badge: 'PASO 2',
+                lblSsrSelect: 'Seleccione si el pasajero requiere atención o protocolo especial:',
+                optSsrNone: 'Pasajero Estándar (Sin requerimientos especiales)',
+                optSsrMinor: '👶 Menor de Edad Acompañado (Con padres / familiar)',
+                optSsrUmnr: '🧒 Menor Sin Acompañar (Servicio UMNR - 5 a 17 años)',
+                optSsrPetc: '🐶 Mascota en Cabina (PETC - Perro o Gato pequeño)',
+                optSsrAvih: '🐕‍🦺 Mascota en Bodega (AVIH - Guacal rígido)',
+                optSsrWchr: '♿ Movilidad Reducida / Silla de Ruedas (WCHR)',
+                optSsrMeda: '🤰 Embarazada / Condición Médica o Sensorial (TEA/Visual)',
+                step3Title: '🧳 3. Recepción, Pesaje de Equipaje y Seguridad DGR',
+                step3Badge: 'PASO 3',
+                lblBagType: 'Tipo de Artículo a Registrar en Bodega',
+                optBagStd: '🧳 Maleta de Bodega Estándar',
+                optBagNone: '🎒 Solo Equipaje de Mano (0 Piezas)',
+                optBagFragile: '📦 Caja / Artículo Frágil (Etiqueta FRÁGIL)',
+                optBagAssist: '👶♿ Coche de Bebé / Silla de Ruedas (Sin costo)',
+                optBagSport: '🎸 Instrumento Musical / Eq. Deportivo',
+                lblBagWeight: 'Peso Registrado en Báscula (kg)',
+                lblDgrTitle: '⚠️ Declaración Obligatoria de Mercancías Peligrosas (IATA DGR):',
+                txtQ1: '¿Empacó usted mismo su equipaje y estuvo bajo su control todo el tiempo?',
+                txtQ2: '¿Confirma que NO lleva baterías de litio sueltas, power banks ni vapeadores en bodega?',
+                txtQ3: '¿Confirma que no lleva aerosoles inflamables, explosivos, gases ni armas?',
+                btnEmitirBp: '🎫 Finalizar Registro y Emitir Pase de Abordar',
+                bpCardTitle: '🎟️ Boarding Pass / Pase de Abordar',
+                btnNewPax: '➕ Nuevo Pasajero',
+                btnPrintBp: '🖨️ Imprimir',
+                bpTagDomestic: 'DOMÉSTICO',
+                bpLblPax: 'Pasajero / Passenger',
+                bpLblDoc: 'Documento / ID',
+                bpLblFlight: 'Vuelo / Flight',
+                bpLblGate: 'Puerta / Gate',
+                bpLblSeat: 'Asiento / Seat',
+                bpLblSsr: 'Atención / SSR',
+                bpLblBag: 'Equipaje / Baggage',
+                bpLblPnr: 'Reserva / PNR',
+                bpCabinNotesHeader: '👩‍✈️ NOTAS PARA TRIPULACIÓN DE CABINA:',
+                bpFooterHint: 'Diríjase al filtro de seguridad AVSEC',
+                manifestTitle: '📊 Pasajeros Chequeados (Clic para ver Pase)',
+                manifestSub: 'Haz clic sobre cualquier pasajero registrado para proyectar o imprimir su pase de abordar.',
+                thPax: 'Pasajero',
+                thSsr: 'SSR',
+                thSeat: 'Silla',
+                thBag: 'Equipaje',
+                emptyPaxRow: 'Aún no hay pasajeros registrados',
+                avsecConsoleTitle: '🔍 Consola de Inspección (Rayos X y Revisión Manual)',
+                lblScanStep1: '1. Seleccione dónde se detectó el artículo:',
+                modeCabin: '🎒 Equipaje de Mano (Cabina)',
+                modePerson: '🧍 Cacheo / Revisión Personal (Bolsillos)',
+                modeHold: '🧳 Maleta de Bodega',
+                lblScanStep2: '2. Haga clic en el objeto detectado en la revisión:',
+                it_liq_ok_n: 'Líquidos ≤ 100 ml', it_liq_ok_s: 'En bolsa transparente',
+                it_liq_big_n: 'Líquidos > 100 ml', it_liq_big_s: 'Botella agua / Perfume',
+                it_pb_n: 'Power Bank / Litio', it_pb_s: 'Batería externa / Vape',
+                it_lap_n: 'Laptop / Tablet', it_lap_s: 'Electrónico grande',
+                it_sci_n: 'Tijeras / Cortauñas', it_sci_s: 'Hoja < 6 cm vs > 6 cm',
+                it_kni_n: 'Navaja / Cuchillo', it_kni_s: 'Arma blanca / Bisturí',
+                it_aer_n: 'Aerosol Inflamable', it_aer_s: 'Gas pimienta / Pintura',
+                it_lig_n: 'Encendedor / Fósforos', it_lig_s: 'Fuego / Combustible',
+                it_too_n: 'Herramientas', it_too_s: 'Destornillador / Martillo',
+                it_met_n: 'Llaves / Monedas / Correa', it_met_s: 'Metal inofensivo',
+                it_toy_n: 'Réplica de Arma', it_toy_s: 'Juguete o fogueo',
+                it_cle_n: 'Sin Novedad', it_cle_s: 'Equipaje / Persona limpia',
+                xraySysTitle: 'SISTEMA AVSEC - AEROPUERTO EL DORADO (BOG)',
+                resultTitleWait: '📡 ESCÁNER EN ESPERA',
+                resultSubWait: 'Seleccione la ubicación y el objeto detectado en la inspección física o manual para evaluar la normativa aeronáutica (RAC 160 / OACI).',
+                logHeaderTitle: '📑 BITÁCORA DE NOVEDADES DE SEGURIDAD',
+                btnClearLogs: 'Limpiar',
+                emptyLogMsg: 'No se han registrado inspecciones todavía...',
+                modeLabelCabin: 'MODO: EQUIPAJE DE MANO',
+                modeLabelPerson: 'MODO: REVISIÓN PERSONAL / BOLSILLOS',
+                modeLabelHold: 'MODO: EQUIPAJE DE BODEGA'
+            },
+            en: {
+                flightBadge: 'FLIGHT LA 4286 | BOG ➔ PSO (Pasto)',
+                tabCheckin: '🛂 1. Counter & Check-in',
+                tabBoarding: '🎟️ 2. Boarding Pass',
+                tabAvsec: '🛡️ 3. Security Screening & X-Ray (AVSEC)',
+                step1Title: '🪪 1. Document & Identity Verification',
+                step1Badge: 'STEP 1',
+                lblPaxName: 'Passenger Full Name *',
+                phPaxName: 'Ex: Juliana Bayona Peña',
+                lblDocType: 'ID Type & Number *',
+                optDocCC: 'National ID Card (CC)',
+                optDocTI: 'Minor ID Card (TI - Ages 7-17)',
+                optDocRC: 'Birth Certificate (RC - Ages 0-6)',
+                optDocPA: 'Passport / Foreign ID',
+                phPaxDoc: 'Number ex: 1.019.981.300',
+                lblPnr: 'Booking Reference (PNR)',
+                lblSeat: 'Assigned Seat',
+                optSeat1: '04A (Window - Premium)',
+                optSeat2: '08C (Aisle)',
+                optSeat3: '12F (Window)',
+                optSeat4: '14B (Middle)',
+                optSeat5: '16A (Emergency Exit)',
+                optSeat6: '21D (Aisle)',
+                lblAgentDocCheck: '✔️ Agent Document Validation:',
+                txtDocCheck1: 'Original physical ID in good condition and photo matches the passenger.',
+                txtDocCheck2: 'First and last names match the booking for flight LA 4286 (BOG-PSO) exactly.',
+                step2Title: '♿🐾👶 2. Special Services (SSR) & Passenger Profile',
+                step2Badge: 'STEP 2',
+                lblSsrSelect: 'Select if the passenger requires special assistance or protocol:',
+                optSsrNone: 'Standard Passenger (No special requirements)',
+                optSsrMinor: '👶 Accompanied Minor (With parents / guardian)',
+                optSsrUmnr: '🧒 Unaccompanied Minor (UMNR Service - Ages 5 to 17)',
+                optSsrPetc: '🐶 Pet in Cabin (PETC - Small Dog or Cat)',
+                optSsrAvih: '🐕‍🦺 Pet in Hold (AVIH - Rigid IATA Kennel)',
+                optSsrWchr: '♿ Reduced Mobility / Wheelchair (WCHR)',
+                optSsrMeda: '🤰 Pregnant / Medical or Sensory Condition (MEDA)',
+                step3Title: '🧳 3. Baggage Acceptance, Weighing & DGR Security',
+                step3Badge: 'STEP 3',
+                lblBagType: 'Checked Baggage Item Type',
+                optBagStd: '🧳 Standard Checked Suitcase',
+                optBagNone: '🎒 Cabin Baggage Only (0 Pieces)',
+                optBagFragile: '📦 Fragile Box / Item (FRAGILE Tag)',
+                optBagAssist: '👶♿ Baby Stroller / Wheelchair (Free of charge)',
+                optBagSport: '🎸 Musical Instrument / Sports Equipment',
+                lblBagWeight: 'Scale Registered Weight (kg)',
+                lblDgrTitle: '⚠️ Mandatory Dangerous Goods Declaration (IATA DGR):',
+                txtQ1: 'Did you pack your baggage yourself and keep it under your control at all times?',
+                txtQ2: 'Do you confirm there are NO loose lithium batteries, power banks, or vapes in checked bags?',
+                txtQ3: 'Do you confirm there are no flammable aerosols, explosives, gases, or weapons?',
+                btnEmitirBp: '🎫 Complete Check-in & Issue Boarding Pass',
+                bpCardTitle: '🎟️ Digital Boarding Pass',
+                btnNewPax: '➕ New Passenger',
+                btnPrintBp: '🖨️ Print',
+                bpTagDomestic: 'DOMESTIC',
+                bpLblPax: 'Passenger',
+                bpLblDoc: 'Document / ID',
+                bpLblFlight: 'Flight',
+                bpLblGate: 'Gate',
+                bpLblSeat: 'Seat',
+                bpLblSsr: 'Service / SSR',
+                bpLblBag: 'Checked Baggage',
+                bpLblPnr: 'Booking / PNR',
+                bpCabinNotesHeader: '👩‍✈️ CABIN CREW REMARKS:',
+                bpFooterHint: 'Proceed to AVSEC security checkpoint',
+                manifestTitle: '📊 Checked-in Passengers (Click to view Pass)',
+                manifestSub: 'Click on any checked-in passenger to display or print their boarding pass.',
+                thPax: 'Passenger',
+                thSsr: 'SSR',
+                thSeat: 'Seat',
+                thBag: 'Baggage',
+                emptyPaxRow: 'No passengers checked in yet',
+                avsecConsoleTitle: '🔍 Inspection Console (X-Ray & Manual Screening)',
+                lblScanStep1: '1. Select where the item was detected:',
+                modeCabin: '🎒 Carry-on Bag (Cabin)',
+                modePerson: '🧍 Pat-down / Personal Screening (Pockets)',
+                modeHold: '🧳 Checked Suitcase (Hold)',
+                lblScanStep2: '2. Click on the item detected during screening:',
+                it_liq_ok_n: 'Liquids ≤ 100 ml', it_liq_ok_s: 'In clear resealable bag',
+                it_liq_big_n: 'Liquids > 100 ml', it_liq_big_s: 'Water bottle / Perfume',
+                it_pb_n: 'Power Bank / Lithium', it_pb_s: 'External battery / Vape',
+                it_lap_n: 'Laptop / Tablet', it_lap_s: 'Large electronic device',
+                it_sci_n: 'Scissors / Nail Clipper', it_sci_s: 'Blade < 6 cm vs > 6 cm',
+                it_kni_n: 'Pocket Knife / Blade', it_kni_s: 'Sharp weapon / Scalpel',
+                it_aer_n: 'Flammable Aerosol', it_aer_s: 'Pepper spray / Spray paint',
+                it_lig_n: 'Lighter / Matches', it_lig_s: 'Fire / Fuel source',
+                it_too_n: 'Work Tools', it_too_s: 'Screwdriver / Hammer',
+                it_met_n: 'Keys / Coins / Belt', it_met_s: 'Harmless metal items',
+                it_toy_n: 'Replica Firearm', it_toy_s: 'Toy or blank gun',
+                it_cle_n: 'All Clear', it_cle_s: 'Clean bag / passenger',
+                xraySysTitle: 'AVSEC SYSTEM - EL DORADO AIRPORT (BOG)',
+                resultTitleWait: '📡 SCANNER STANDBY',
+                resultSubWait: 'Select the screening location and detected item to evaluate aviation security regulations (RAC 160 / ICAO).',
+                logHeaderTitle: '📑 SECURITY INCIDENT & SCREENING LOG',
+                btnClearLogs: 'Clear',
+                emptyLogMsg: 'No screenings logged yet...',
+                modeLabelCabin: 'MODE: CARRY-ON BAGGAGE',
+                modeLabelPerson: 'MODE: PERSONAL SCREENING / POCKETS',
+                modeLabelHold: 'MODE: CHECKED BAGGAGE (HOLD)'
+            }
+        };
 
         // --- SISTEMA DE SONIDOS SEGUROS ---
         var audioCtx = null;
@@ -1156,6 +1399,120 @@
                     osc.stop(audioCtx.currentTime + 0.35);
                 }
             } catch (e) {}
+        }
+
+        function cambiarIdioma(lang) {
+            currentLang = lang;
+            var t = i18n[lang];
+
+            document.getElementById('btnLangEs').classList.toggle('active', lang === 'es');
+            document.getElementById('btnLangEn').classList.toggle('active', lang === 'en');
+
+            document.getElementById('flightBadgeText').innerText = t.flightBadge;
+            document.getElementById('tabBtnCheckin').innerText = t.tabCheckin;
+            document.getElementById('tabBtnBoarding').innerText = t.tabBoarding;
+            document.getElementById('tabBtnAvsec').innerText = t.tabAvsec;
+
+            document.getElementById('step1Title').innerText = t.step1Title;
+            document.getElementById('step1Badge').innerText = t.step1Badge;
+            document.getElementById('lblPaxName').innerText = t.lblPaxName;
+            document.getElementById('paxName').placeholder = t.phPaxName;
+            document.getElementById('lblDocType').innerText = t.lblDocType;
+            document.getElementById('optDocCC').innerText = t.optDocCC;
+            document.getElementById('optDocTI').innerText = t.optDocTI;
+            document.getElementById('optDocRC').innerText = t.optDocRC;
+            document.getElementById('optDocPA').innerText = t.optDocPA;
+            document.getElementById('paxDoc').placeholder = t.phPaxDoc;
+            document.getElementById('lblPnr').innerText = t.lblPnr;
+            document.getElementById('lblSeat').innerText = t.lblSeat;
+            document.getElementById('optSeat1').innerText = t.optSeat1;
+            document.getElementById('optSeat2').innerText = t.optSeat2;
+            document.getElementById('optSeat3').innerText = t.optSeat3;
+            document.getElementById('optSeat4').innerText = t.optSeat4;
+            document.getElementById('optSeat5').innerText = t.optSeat5;
+            document.getElementById('optSeat6').innerText = t.optSeat6;
+            document.getElementById('lblAgentDocCheck').innerText = t.lblAgentDocCheck;
+            document.getElementById('txtDocCheck1').innerText = t.txtDocCheck1;
+            document.getElementById('txtDocCheck2').innerText = t.txtDocCheck2;
+
+            document.getElementById('step2Title').innerText = t.step2Title;
+            document.getElementById('step2Badge').innerText = t.step2Badge;
+            document.getElementById('lblSsrSelect').innerText = t.lblSsrSelect;
+            document.getElementById('optSsrNone').innerText = t.optSsrNone;
+            document.getElementById('optSsrMinor').innerText = t.optSsrMinor;
+            document.getElementById('optSsrUmnr').innerText = t.optSsrUmnr;
+            document.getElementById('optSsrPetc').innerText = t.optSsrPetc;
+            document.getElementById('optSsrAvih').innerText = t.optSsrAvih;
+            document.getElementById('optSsrWchr').innerText = t.optSsrWchr;
+            document.getElementById('optSsrMeda').innerText = t.optSsrMeda;
+
+            document.getElementById('step3Title').innerText = t.step3Title;
+            document.getElementById('step3Badge').innerText = t.step3Badge;
+            document.getElementById('lblBagType').innerText = t.lblBagType;
+            document.getElementById('optBagStd').innerText = t.optBagStd;
+            document.getElementById('optBagNone').innerText = t.optBagNone;
+            document.getElementById('optBagFragile').innerText = t.optBagFragile;
+            document.getElementById('optBagAssist').innerText = t.optBagAssist;
+            document.getElementById('optBagSport').innerText = t.optBagSport;
+            document.getElementById('lblBagWeight').innerText = t.lblBagWeight;
+            document.getElementById('lblDgrTitle').innerText = t.lblDgrTitle;
+            document.getElementById('txtQ1').innerText = t.txtQ1;
+            document.getElementById('txtQ2').innerText = t.txtQ2;
+            document.getElementById('txtQ3').innerText = t.txtQ3;
+            document.getElementById('btnEmitirBp').innerText = t.btnEmitirBp;
+
+            document.getElementById('bpCardTitle').innerText = t.bpCardTitle;
+            document.getElementById('btnNewPax').innerText = t.btnNewPax;
+            document.getElementById('btnPrintBp').innerText = t.btnPrintBp;
+            document.getElementById('bpTagDomestic').innerText = t.bpTagDomestic;
+            document.getElementById('bpLblPax').innerText = t.bpLblPax;
+            document.getElementById('bpLblDoc').innerText = t.bpLblDoc;
+            document.getElementById('bpLblFlight').innerText = t.bpLblFlight;
+            document.getElementById('bpLblGate').innerText = t.bpLblGate;
+            document.getElementById('bpLblSeat').innerText = t.bpLblSeat;
+            document.getElementById('bpLblSsr').innerText = t.bpLblSsr;
+            document.getElementById('bpLblBag').innerText = t.bpLblBag;
+            document.getElementById('bpLblPnr').innerText = t.bpLblPnr;
+            document.getElementById('bpCabinNotesHeader').innerText = t.bpCabinNotesHeader;
+            document.getElementById('bpFooterHint').innerText = t.bpFooterHint;
+            document.getElementById('manifestTitle').innerText = t.manifestTitle;
+            document.getElementById('manifestSub').innerText = t.manifestSub;
+            document.getElementById('thPax').innerText = t.thPax;
+            document.getElementById('thSsr').innerText = t.thSsr;
+            document.getElementById('thSeat').innerText = t.thSeat;
+            document.getElementById('thBag').innerText = t.thBag;
+            if (listaPasajeros.length === 0) {
+                var emptyRow = document.getElementById('emptyPaxRow');
+                if (emptyRow) emptyRow.innerText = t.emptyPaxRow;
+            }
+
+            document.getElementById('avsecConsoleTitle').innerText = t.avsecConsoleTitle;
+            document.getElementById('lblScanStep1').innerText = t.lblScanStep1;
+            document.getElementById('modeCabin').innerText = t.modeCabin;
+            document.getElementById('modePerson').innerText = t.modePerson;
+            document.getElementById('modeHold').innerText = t.modeHold;
+            document.getElementById('lblScanStep2').innerText = t.lblScanStep2;
+
+            var itemIds = ['liq_ok','liq_big','pb','lap','sci','kni','aer','lig','too','met','toy','cle'];
+            for (var k = 0; k < itemIds.length; k++) {
+                var id = itemIds[k];
+                document.getElementById('it_' + id + '_n').innerText = t['it_' + id + '_n'];
+                document.getElementById('it_' + id + '_s').innerText = t['it_' + id + '_s'];
+            }
+
+            document.getElementById('xraySysTitle').innerText = t.xraySysTitle;
+            document.getElementById('logHeaderTitle').innerText = t.logHeaderTitle;
+            document.getElementById('btnClearLogs').innerText = t.btnClearLogs;
+            var emptyLog = document.getElementById('emptyLogMsg');
+            if (emptyLog) emptyLog.innerText = t.emptyLogMsg;
+
+            if (modoEscannerActual === 'cabin') document.getElementById('currentModeLabel').innerText = t.modeLabelCabin;
+            else if (modoEscannerActual === 'person') document.getElementById('currentModeLabel').innerText = t.modeLabelPerson;
+            else document.getElementById('currentModeLabel').innerText = t.modeLabelHold;
+
+            actualizarSSR(true);
+            actualizarEquipaje(true);
+            playTone('ok');
         }
 
         function irAPestana(idPestana) {
@@ -1206,25 +1563,43 @@
 
             if (semanas >= 36) {
                 cajaAlerta.className = 'preg-alert danger';
-                cajaAlerta.innerHTML = '🚨 BLOQUEO POR GESTACIÓN AVANZADA (' + semanas + ' SEMANAS): Supera las 36 semanas. NO SE PUEDE EMITIR PASE DE ABORDAR sin autorización médica especial de LATAM y certificado obstétrico (máx. 48-72h).';
+                cajaAlerta.innerHTML = currentLang === 'es'
+                    ? '🚨 BLOQUEO POR GESTACIÓN AVANZADA (' + semanas + ' SEMANAS): Supera las 36 semanas. NO SE PUEDE EMITIR PASE DE ABORDAR sin autorización médica especial de LATAM y certificado obstétrico (máx. 48-72h).'
+                    : '🚨 ADVANCED PREGNANCY HOLD (' + semanas + ' WEEKS): Exceeds 36 weeks. BOARDING PASS CANNOT BE ISSUED without LATAM medical clearance and obstetric certificate (max. 48-72h).';
                 if (chk) { chk.checked = false; if (box) box.classList.remove('approved'); }
-                if (labelCasilla) labelCasilla.innerText = '✅ AUTORIZACIÓN DE VUELO (≥ 36 SEMANAS): Confirmo que presentó certificado obstétrico (máx. 72h), autorización médica de LATAM y se asignó silla en pasillo (NO salida de emergencia).';
+                if (labelCasilla) {
+                    labelCasilla.innerText = currentLang === 'es'
+                        ? '✅ AUTORIZACIÓN DE VUELO (≥ 36 SEMANAS): Confirmo que presentó certificado obstétrico (máx. 72h), autorización médica de LATAM y se asignó silla en pasillo (NO salida de emergencia).'
+                        : '✅ FLIGHT CLEARANCE (≥ 36 WEEKS): I confirm obstetric certificate (max. 72h), LATAM medical approval, and aisle seat assignment (NO exit row).';
+                }
                 playTone('danger');
             } else if (semanas >= 30) {
                 cajaAlerta.className = 'preg-alert caution';
-                cajaAlerta.innerHTML = '⚠️ EMBARAZO ≥ 30 SEMANAS (' + semanas + ' SEMANAS) - PASE BLOQUEADO HASTA VERIFICAR REQUISITOS: Exige certificado médico vigente, asiento en pasillo (nunca salida de emergencia) y aviso a tripulación.';
+                cajaAlerta.innerHTML = currentLang === 'es'
+                    ? '⚠️ EMBARAZO ≥ 30 SEMANAS (' + semanas + ' SEMANAS) - PASE BLOQUEADO HASTA VERIFICAR REQUISITOS: Exige certificado médico vigente, asiento en pasillo (nunca salida de emergencia) y aviso a tripulación.'
+                    : '⚠️ PREGNANCY ≥ 30 WEEKS (' + semanas + ' WEEKS) - PASS BLOCKED UNTIL VERIFIED: Requires valid medical certificate, aisle seat (never exit row), and cabin crew briefing.';
                 if (chk) { chk.checked = false; if (box) box.classList.remove('approved'); }
-                if (labelCasilla) labelCasilla.innerText = '✅ AUTORIZACIÓN DE VUELO (≥ 30 SEMANAS): Confirmo que presentó el certificado médico obligatorio, tiene silla en pasillo y ya puede volar.';
+                if (labelCasilla) {
+                    labelCasilla.innerText = currentLang === 'es'
+                        ? '✅ AUTORIZACIÓN DE VUELO (≥ 30 SEMANAS): Confirmo que presentó el certificado médico obligatorio, tiene silla en pasillo y ya puede volar.'
+                        : '✅ FLIGHT CLEARANCE (≥ 30 WEEKS): I confirm mandatory medical certificate was presented, aisle seat assigned, and passenger is cleared to fly.';
+                }
                 playTone('warn');
             } else {
                 cajaAlerta.className = 'preg-alert safe';
-                cajaAlerta.innerHTML = '✅ Gestación menor a 30 semanas (' + semanas + ' semanas): Puede volar sin restricción médica. Evitar fila de salida de emergencia.';
-                if (labelCasilla) labelCasilla.innerText = '✅ AUTORIZACIÓN DE VUELO: Confirmo que la pasajera cumple los requisitos (< 30 semanas) y no está en salida de emergencia.';
+                cajaAlerta.innerHTML = currentLang === 'es'
+                    ? '✅ Gestación menor a 30 semanas (' + semanas + ' semanas): Puede volar sin restricción médica. Evitar fila de salida de emergencia.'
+                    : '✅ Gestation under 30 weeks (' + semanas + ' weeks): Cleared to fly without special medical restriction. Avoid emergency exit row.';
+                if (labelCasilla) {
+                    labelCasilla.innerText = currentLang === 'es'
+                        ? '✅ AUTORIZACIÓN DE VUELO: Confirmo que la pasajera cumple los requisitos (< 30 semanas) y no está en salida de emergencia.'
+                        : '✅ FLIGHT CLEARANCE: I confirm passenger meets requirements (< 30 weeks) and is not seated in an exit row.';
+                }
                 playTone('ok');
             }
         }
 
-        function actualizarSSR() {
+        function actualizarSSR(silent) {
             var ssr = document.getElementById('ssrType').value;
             var box = document.getElementById('ssrProtocolBox');
             var form = document.getElementById('dynamicSsrForm');
@@ -1238,63 +1613,87 @@
                 return;
             }
 
+            var isEs = (currentLang === 'es');
             var htmlProtocolo = '';
             var htmlCampos = '';
             var textoAutorizacion = '';
 
             if (ssr === 'MINOR_ACC') {
-                htmlProtocolo = '<h4>👶 Protocolo: Menor de Edad Acompañado</h4><ul><li><strong>Documentación:</strong> Verificar Registro Civil original (0-6) o Tarjeta de Identidad (7-17).</li><li><strong>Acompañante:</strong> Validar que viaja con padre, madre o adulto autorizado.</li></ul>';
-                title.innerText = '📝 Datos del Menor Acompañado y Estado de Ánimo';
-                textoAutorizacion = '✅ AUTORIZACIÓN DE VUELO: Confirmo que presentó Registro Civil / TI original y viaja con adulto responsable verificado.';
+                htmlProtocolo = isEs
+                    ? '<h4>👶 Protocolo: Menor de Edad Acompañado</h4><ul><li><strong>Documentación:</strong> Verificar Registro Civil original (0-6) o Tarjeta de Identidad (7-17).</li><li><strong>Acompañante:</strong> Validar que viaja con padre, madre o adulto autorizado.</li></ul>'
+                    : '<h4>👶 Protocol: Accompanied Minor</h4><ul><li><strong>Documentation:</strong> Verify original Birth Certificate (0-6) or Minor ID (7-17).</li><li><strong>Guardian:</strong> Confirm minor travels with parent or authorized adult.</li></ul>';
+                title.innerText = isEs ? '📝 Datos del Menor Acompañado y Estado de Ánimo' : '📝 Accompanied Minor Details & Mood';
+                textoAutorizacion = isEs
+                    ? '✅ AUTORIZACIÓN DE VUELO: Confirmo que presentó Registro Civil / TI original y viaja con adulto responsable verificado.'
+                    : '✅ FLIGHT CLEARANCE: I confirm original Birth Certificate / ID was verified and minor travels with responsible adult.';
                 htmlCampos = '<div class="form-grid">' +
-                    '<div class="form-group"><label>Nombre del Adulto Responsable *</label><input type="text" id="dyn_adultName" placeholder="Ej: María Peña (Madre)"></div>' +
-                    '<div class="form-group"><label>Estado de Ánimo del Menor</label><select id="dyn_mood"><option value="Tranquilo y emocionado por volar">😊 Tranquilo y emocionado</option><option value="Nervioso / Ansioso por el vuelo">😰 Nervioso / Ansioso</option><option value="Dormido / Cansado">😴 Dormido / Cansado</option></select></div>' +
+                    '<div class="form-group"><label>' + (isEs ? 'Nombre del Adulto Responsable *' : 'Responsible Adult Full Name *') + '</label><input type="text" id="dyn_adultName" placeholder="Ej: María Peña"></div>' +
+                    '<div class="form-group"><label>' + (isEs ? 'Estado de Ánimo del Menor' : 'Minor Mood / State') + '</label><select id="dyn_mood"><option value="Tranquilo y emocionado por volar">' + (isEs ? '😊 Tranquilo y emocionado' : '😊 Calm and excited') + '</option><option value="Nervioso / Ansioso por el vuelo">' + (isEs ? '😰 Nervioso / Ansioso' : '😰 Nervous / Anxious') + '</option><option value="Dormido / Cansado">' + (isEs ? '😴 Dormido / Cansado' : '😴 Sleepy / Tired') + '</option></select></div>' +
                     '</div>';
             } else if (ssr === 'UMNR') {
-                htmlProtocolo = '<h4>🧒 Protocolo: Menor Sin Acompañar (Código: UMNR - 5 a 17 años)</h4><ul><li><strong>Custodia:</strong> Diligenciar formato físico de custodia (Datos de quien entrega en BOG y recibe en PSO).</li><li><strong>Entrega:</strong> Acompañar por filtro AVSEC y entregar personalmente al Jefe de Cabina.</li></ul>';
-                title.innerText = '📝 Formato de Custodia y Datos UMNR';
-                textoAutorizacion = '✅ AUTORIZACIÓN DE VUELO (UMNR): Confirmo que se diligenció el formato físico de custodia, se verificaron documentos y el menor ya puede volar.';
+                htmlProtocolo = isEs
+                    ? '<h4>🧒 Protocolo: Menor Sin Acompañar (Código: UMNR - 5 a 17 años)</h4><ul><li><strong>Custodia:</strong> Diligenciar formato físico de custodia (Datos de quien entrega en BOG y recibe en PSO).</li><li><strong>Entrega:</strong> Acompañar por filtro AVSEC y entregar personalmente al Jefe de Cabina.</li></ul>'
+                    : '<h4>🧒 Protocol: Unaccompanied Minor (Code: UMNR - Ages 5 to 17)</h4><ul><li><strong>Custody:</strong> Complete physical custody form (Drop-off contact in BOG & Pick-up in PSO).</li><li><strong>Handover:</strong> Escort through AVSEC checkpoint and hand over to Purser.</li></ul>';
+                title.innerText = isEs ? '📝 Formato de Custodia y Datos UMNR' : '📝 UMNR Custody & Handover Form';
+                textoAutorizacion = isEs
+                    ? '✅ AUTORIZACIÓN DE VUELO (UMNR): Confirmo que se diligenció el formato físico de custodia, se verificaron documentos y el menor ya puede volar.'
+                    : '✅ FLIGHT CLEARANCE (UMNR): I confirm custody form is completed, IDs are verified, and minor is cleared to fly.';
                 htmlCampos = '<div class="form-grid">' +
-                    '<div class="form-group"><label>Persona que ENTREGA en BOG (Nombre y Tel) *</label><input type="text" id="dyn_dropName" placeholder="Carlos Bayona - 3110000000"></div>' +
-                    '<div class="form-group"><label>Persona que RECIBE en PSO (Nombre y Tel) *</label><input type="text" id="dyn_pickupName" placeholder="Ana Peña - 3200000000"></div>' +
-                    '<div class="form-group full"><label>Estado de Ánimo del Menor (Para Tripulación)</label><select id="dyn_mood"><option value="Muy tranquilo, va con escarapela UMNR">😊 Muy tranquilo y colaborador</option><option value="Tímido / Ligeramente nervioso">😐 Tímido / Ligeramente nervioso</option><option value="Muy ansioso / Requiere atención de azafatas">😢 Muy ansioso / Requiere atención especial</option></select></div>' +
+                    '<div class="form-group"><label>' + (isEs ? 'Persona que ENTREGA en BOG (Nombre y Tel) *' : 'DROP-OFF Person in BOG (Name & Phone) *') + '</label><input type="text" id="dyn_dropName" placeholder="Carlos Bayona - 3110000000"></div>' +
+                    '<div class="form-group"><label>' + (isEs ? 'Persona que RECIBE en PSO (Nombre y Tel) *' : 'PICK-UP Person in PSO (Name & Phone) *') + '</label><input type="text" id="dyn_pickupName" placeholder="Ana Peña - 3200000000"></div>' +
+                    '<div class="form-group full"><label>' + (isEs ? 'Estado de Ánimo del Menor (Para Tripulación)' : 'Minor Mood (For Cabin Crew)') + '</label><select id="dyn_mood"><option value="Muy tranquilo, va con escarapela UMNR">' + (isEs ? '😊 Muy tranquilo y colaborador' : '😊 Very calm and cooperative') + '</option><option value="Tímido / Ligeramente nervioso">' + (isEs ? '😐 Tímido / Ligeramente nervioso' : '😐 Shy / Slightly nervous') + '</option><option value="Muy ansioso / Requiere atención de azafatas">' + (isEs ? '😢 Muy ansioso / Requiere atención especial' : '😢 Very anxious / Needs crew attention') + '</option></select></div>' +
                     '</div>';
             } else if (ssr === 'PETC') {
-                htmlProtocolo = '<h4>🐶 Protocolo: Mascota en Cabina (Código: PETC)</h4><ul><li><strong>Guacal:</strong> Blando, ventilado, bajo el asiento delantero (máx 10 kg).</li><li><strong>Sanidad:</strong> Verificar carné de vacunación vigente (rabia) y certificado de salud (máx. 10 días).</li></ul>';
-                title.innerText = '📝 Validación Sanitaria de Mascota (Cabina)';
-                textoAutorizacion = '✅ AUTORIZACIÓN DE VUELO (PETC): Confirmo que presentó carné de vacunación vigente (rabia), certificado veterinario y guacal apto para cabina.';
+                htmlProtocolo = isEs
+                    ? '<h4>🐶 Protocolo: Mascota en Cabina (Código: PETC)</h4><ul><li><strong>Guacal:</strong> Blando, ventilado, bajo el asiento delantero (máx 10 kg).</li><li><strong>Sanidad:</strong> Verificar carné de vacunación vigente (rabia) y certificado de salud (máx. 10 días).</li></ul>'
+                    : '<h4>🐶 Protocol: Pet in Cabin (Code: PETC)</h4><ul><li><strong>Carrier:</strong> Soft-sided, ventilated, fits under front seat (max 10 kg).</li><li><strong>Health:</strong> Verify valid rabies vaccination card and vet health certificate (max. 10 days).</li></ul>';
+                title.innerText = isEs ? '📝 Validación Sanitaria de Mascota (Cabina)' : '📝 Cabin Pet Health Validation';
+                textoAutorizacion = isEs
+                    ? '✅ AUTORIZACIÓN DE VUELO (PETC): Confirmo que presentó carné de vacunación vigente (rabia), certificado veterinario y guacal apto para cabina.'
+                    : '✅ FLIGHT CLEARANCE (PETC): I confirm valid rabies vaccination card, health certificate, and compliant cabin carrier.';
                 htmlCampos = '<div class="form-grid">' +
-                    '<div class="form-group"><label>Especie y Nombre de la Mascota *</label><input type="text" id="dyn_petInfo" placeholder="Perro (Bruno) - 6 kg"></div>' +
-                    '<div class="form-group"><label>Comportamiento / Estado de la Mascota</label><select id="dyn_mood"><option value="Mascota calmada dentro del guacal">🐾 Muy calmada dentro del guacal</option><option value="Mascota inquieta / Ladra levemente">🐕 Inquieta / Ladra levemente</option></select></div>' +
+                    '<div class="form-group"><label>' + (isEs ? 'Especie y Nombre de la Mascota *' : 'Pet Species & Name *') + '</label><input type="text" id="dyn_petInfo" placeholder="Perro (Bruno) - 6 kg"></div>' +
+                    '<div class="form-group"><label>' + (isEs ? 'Comportamiento / Estado de la Mascota' : 'Pet Behavior / Status') + '</label><select id="dyn_mood"><option value="Mascota calmada dentro del guacal">' + (isEs ? '🐾 Muy calmada dentro del guacal' : '🐾 Very calm inside carrier') + '</option><option value="Mascota inquieta / Ladra levemente">' + (isEs ? '🐕 Inquieta / Ladra levemente' : '🐕 Restless / Barking slightly') + '</option></select></div>' +
                     '</div>';
             } else if (ssr === 'AVIH') {
-                htmlProtocolo = '<h4>🐕‍🦺 Protocolo: Mascota en Bodega (Código: AVIH)</h4><ul><li><strong>Guacal Rígido:</strong> Homologado IATA con tornillos de seguridad y material absorbente.</li><li><strong>Documentación:</strong> Certificado veterinario y vacunas al día.</li></ul>';
-                title.innerText = '📝 Datos de Mascota en Bodega (AVIH)';
-                textoAutorizacion = '✅ AUTORIZACIÓN DE VUELO (AVIH): Confirmo que presentó carné de vacunas, certificado veterinario y guacal rígido IATA verificado.';
+                htmlProtocolo = isEs
+                    ? '<h4>🐕‍🦺 Protocolo: Mascota en Bodega (Código: AVIH)</h4><ul><li><strong>Guacal Rígido:</strong> Homologado IATA con tornillos de seguridad y material absorbente.</li><li><strong>Documentación:</strong> Certificado veterinario y vacunas al día.</li></ul>'
+                    : '<h4>🐕‍🦺 Protocol: Pet in Hold (Code: AVIH)</h4><ul><li><strong>Rigid Kennel:</strong> IATA-approved with metal bolts and absorbent bedding.</li><li><strong>Documentation:</strong> Valid vet certificate and up-to-date vaccines.</li></ul>';
+                title.innerText = isEs ? '📝 Datos de Mascota en Bodega (AVIH)' : '📝 Hold Pet Details (AVIH)';
+                textoAutorizacion = isEs
+                    ? '✅ AUTORIZACIÓN DE VUELO (AVIH): Confirmo que presentó carné de vacunas, certificado veterinario y guacal rígido IATA verificado.'
+                    : '✅ FLIGHT CLEARANCE (AVIH): I confirm vaccination card, vet certificate, and rigid IATA kennel verified.';
                 htmlCampos = '<div class="form-grid">' +
-                    '<div class="form-group full"><label>Raza y Peso total con Guacal *</label><input type="text" id="dyn_petInfo" placeholder="Pastor Alemán - 24 kg"></div>' +
+                    '<div class="form-group full"><label>' + (isEs ? 'Raza y Peso total con Guacal *' : 'Breed & Total Weight with Kennel *') + '</label><input type="text" id="dyn_petInfo" placeholder="Pastor Alemán - 24 kg"></div>' +
                     '</div>';
             } else if (ssr === 'WCHR') {
-                htmlProtocolo = '<h4>♿ Protocolo: Movilidad Reducida (Código: WCHR)</h4><ul><li><strong>Asistencia:</strong> Silla de ruedas asignada y agente de asistencia en tierra hasta la puerta del avión.</li><li><strong>Pre-abordaje:</strong> Prioridad de embarque (Grupo 1).</li></ul>';
-                title.innerText = '📝 Detalles de Asistencia de Movilidad';
-                textoAutorizacion = '✅ AUTORIZACIÓN DE VUELO (WCHR): Confirmo asignación de silla de ruedas, asiento adecuado (fuera de salida de emergencia) y protocolo de pre-abordaje.';
+                htmlProtocolo = isEs
+                    ? '<h4>♿ Protocolo: Movilidad Reducida (Código: WCHR)</h4><ul><li><strong>Asistencia:</strong> Silla de ruedas asignada y agente de asistencia en tierra hasta la puerta del avión.</li><li><strong>Pre-abordaje:</strong> Prioridad de embarque (Grupo 1).</li></ul>'
+                    : '<h4>♿ Protocol: Reduced Mobility (Code: WCHR)</h4><ul><li><strong>Assistance:</strong> Wheelchair assigned with ground escort to aircraft door.</li><li><strong>Pre-boarding:</strong> Priority boarding (Group 1).</li></ul>';
+                title.innerText = isEs ? '📝 Detalles de Asistencia de Movilidad' : '📝 Mobility Assistance Details';
+                textoAutorizacion = isEs
+                    ? '✅ AUTORIZACIÓN DE VUELO (WCHR): Confirmo asignación de silla de ruedas, asiento adecuado (fuera de salida de emergencia) y protocolo de pre-abordaje.'
+                    : '✅ FLIGHT CLEARANCE (WCHR): I confirm wheelchair assignment, proper seating (non-exit row), and pre-boarding protocol.';
                 htmlCampos = '<div class="form-grid">' +
-                    '<div class="form-group"><label>Tipo de Asistencia Requerida</label><select id="dyn_wchrType"><option value="Requiere silla hasta la puerta del avión (WCHR)">Requiere silla hasta la puerta</option><option value="Viaja con silla propia (etiquetada)">Viaja con silla propia</option></select></div>' +
-                    '<div class="form-group"><label>Estado de Ánimo / Sensación para Abordar</label><input type="text" id="dyn_mood" placeholder="Muy animado y listo para abordar"></div>' +
+                    '<div class="form-group"><label>' + (isEs ? 'Tipo de Asistencia Requerida' : 'Assistance Type Required') + '</label><select id="dyn_wchrType"><option value="Requiere silla hasta la puerta del avión (WCHR)">' + (isEs ? 'Requiere silla hasta la puerta' : 'Wheelchair to aircraft door') + '</option><option value="Viaja con silla propia (etiquetada)">' + (isEs ? 'Viaja con silla propia' : 'Traveling with own wheelchair') + '</option></select></div>' +
+                    '<div class="form-group"><label>' + (isEs ? 'Estado de Ánimo / Sensación para Abordar' : 'Passenger Mood / Notes') + '</label><input type="text" id="dyn_mood" placeholder="Ready to board"></div>' +
                     '</div>';
             } else if (ssr === 'MEDA') {
-                htmlProtocolo = '<h4>🤰 Protocolo: Embarazada / Condición Médica (Código: MEDA)</h4><ul><li><strong>Regla de las 30 Semanas:</strong> Si supera las 30 semanas de gestación, NO puede abordar sin certificado médico vigente y revisión de silla.</li><li><strong>Ubicación:</strong> Asignar asiento en pasillo y prohibido salida de emergencia.</li></ul>';
-                title.innerText = '📝 Certificado Médico, Semanas de Embarazo y Estado de Salud';
-                textoAutorizacion = '✅ AUTORIZACIÓN DE VUELO (MEDA): Confirmo que la pasajera presentó todos los certificados médicos requeridos y ya puede volar.';
+                htmlProtocolo = isEs
+                    ? '<h4>🤰 Protocolo: Embarazada / Condición Médica (Código: MEDA)</h4><ul><li><strong>Regla de las 30 Semanas:</strong> Si supera las 30 semanas de gestación, NO puede abordar sin certificado médico vigente y revisión de silla.</li><li><strong>Ubicación:</strong> Asignar asiento en pasillo y prohibido salida de emergencia.</li></ul>'
+                    : '<h4>🤰 Protocol: Pregnancy / Medical Condition (Code: MEDA)</h4><ul><li><strong>30-Week Rule:</strong> If gestation exceeds 30 weeks, passenger CANNOT board without a valid medical certificate and seat check.</li><li><strong>Seating:</strong> Assign aisle seat; emergency exit rows are strictly prohibited.</li></ul>';
+                title.innerText = isEs ? '📝 Certificado Médico, Semanas de Embarazo y Estado de Salud' : '📝 Medical Certificate, Pregnancy Weeks & Health Status';
+                textoAutorizacion = isEs
+                    ? '✅ AUTORIZACIÓN DE VUELO (MEDA): Confirmo que la pasajera presentó todos los certificados médicos requeridos y ya puede volar.'
+                    : '✅ FLIGHT CLEARANCE (MEDA): I confirm passenger presented all required medical certificates and is cleared to fly.';
                 htmlCampos = '<div class="form-grid">' +
-                    '<div class="form-group"><label>Condición Específica *</label><input type="text" id="dyn_condition" placeholder="Ej: Embarazo / Condición sensorial"></div>' +
-                    '<div class="form-group"><label>Semanas de Embarazo (si aplica)</label><input type="number" id="dyn_pregWeeks" min="1" max="42" placeholder="Ej: 32" oninput="verificarSemanasEmbarazo()"></div>' +
-                    '<div class="form-group full"><label>¿Cómo se siente para volar? (Para Tripulación)</label><input type="text" id="dyn_mood" placeholder="Se siente estable, requiere hidratación"></div>' +
+                    '<div class="form-group"><label>' + (isEs ? 'Condición Específica *' : 'Specific Condition *') + '</label><input type="text" id="dyn_condition" placeholder="Ej: Embarazo / Pregnancy"></div>' +
+                    '<div class="form-group"><label>' + (isEs ? 'Semanas de Embarazo (si aplica)' : 'Pregnancy Weeks (if applicable)') + '</label><input type="number" id="dyn_pregWeeks" min="1" max="42" placeholder="Ej: 32" oninput="verificarSemanasEmbarazo()"></div>' +
+                    '<div class="form-group full"><label>' + (isEs ? '¿Cómo se siente para volar? (Para Tripulación)' : 'How is passenger feeling? (For Crew)') + '</label><input type="text" id="dyn_mood" placeholder="Stable, needs water"></div>' +
                     '<div class="form-group full"><div id="pregAlertBox" class="preg-alert"></div></div>' +
                     '</div>';
             }
 
-            // Casilla obligatoria de autorización final para emitir pase
             htmlCampos += '<div class="ssr-clearance-box" id="ssrClearanceBox">' +
                 '<label class="ssr-clearance-item">' +
                 '<input type="checkbox" id="ssrClearanceCheck" onchange="toggleSsrClearanceStyle()">' +
@@ -1306,21 +1705,24 @@
             box.classList.add('visible');
             fields.innerHTML = htmlCampos;
             form.classList.add('visible');
-            playTone('ok');
+            if (!silent) playTone('ok');
         }
 
-        function actualizarEquipaje() {
+        function actualizarEquipaje(silent) {
             var tipo = document.getElementById('bagType').value;
             var inputPeso = document.getElementById('bagWeight');
             var peso = parseFloat(inputPeso.value) || 0;
             var alerta = document.getElementById('bagAlert');
             var preview = document.getElementById('bagTagPreview');
             var labelTipo = document.getElementById('bagTagType');
+            var isEs = (currentLang === 'es');
 
             if (tipo === 'Sin Equipaje Bodega') {
                 inputPeso.value = 0;
                 alerta.className = 'baggage-status ok';
-                alerta.innerHTML = 'ℹ️ Pasajero viaja únicamente con equipaje de mano en cabina (0 piezas en bodega).';
+                alerta.innerHTML = isEs
+                    ? 'ℹ️ Pasajero viaja únicamente con equipaje de mano en cabina (0 piezas en bodega).'
+                    : 'ℹ️ Passenger traveling with cabin baggage only (0 checked pieces).';
                 preview.style.display = 'none';
                 return;
             }
@@ -1330,23 +1732,34 @@
 
             if (tipo === 'Coche Bebé / Silla Ruedas') {
                 alerta.className = 'baggage-status ok';
-                alerta.innerHTML = '♿👶 Artículo de asistencia exento de cobro por peso. Etiquetar para entrega en puerta de avión (DAA).';
+                alerta.innerHTML = isEs
+                    ? '♿👶 Artículo de asistencia exento de cobro por peso. Etiquetar para entrega en puerta de avión (DAA).'
+                    : '♿👶 Mobility/infant item exempt from weight fees. Tag for Delivery at Aircraft (DAA).';
             } else if (peso > 32) {
                 alerta.className = 'baggage-status overweight';
-                alerta.innerHTML = '🚨 EXCESO CRÍTICO (' + peso + ' kg): Ninguna maleta individual puede pesar más de 32 kg. Debe reempacar.';
-                playTone('danger');
+                alerta.innerHTML = isEs
+                    ? '🚨 EXCESO CRÍTICO (' + peso + ' kg): Ninguna maleta individual puede pesar más de 32 kg. Debe reempacar.'
+                    : '🚨 CRITICAL OVERWEIGHT (' + peso + ' kg): No single bag may exceed 32 kg. Passenger must repack.';
+                if (!silent) playTone('danger');
             } else if (peso > 23) {
                 alerta.className = 'baggage-status overweight';
-                alerta.innerHTML = '⚠️ SOBREPESO (' + peso + ' kg): Excede los 23 kg estándar. Cobrar tarifa de sobrepeso y colocar etiqueta amarilla <strong>HEAVY</strong>.';
-                playTone('warn');
+                alerta.innerHTML = isEs
+                    ? '⚠️ SOBREPESO (' + peso + ' kg): Excede los 23 kg estándar. Cobrar tarifa de sobrepeso y colocar etiqueta amarilla <strong>HEAVY</strong>.'
+                    : '⚠️ OVERWEIGHT (' + peso + ' kg): Exceeds 23 kg allowance. Charge overweight fee and attach yellow <strong>HEAVY</strong> tag.';
+                if (!silent) playTone('warn');
             } else {
                 alerta.className = 'baggage-status ok';
-                var extra = tipo.indexOf('Frágil') !== -1 ? ' Colocar etiqueta roja <strong>FRÁGIL</strong>.' : ' Listo para banda transportadora.';
-                alerta.innerHTML = '✅ Peso permitido en franquicia (' + peso + ' kg ≤ 23 kg).' + extra;
+                var extra = tipo.indexOf('Frágil') !== -1
+                    ? (isEs ? ' Colocar etiqueta roja <strong>FRÁGIL</strong>.' : ' Attach red <strong>FRAGILE</strong> tag.')
+                    : (isEs ? ' Listo para banda transportadora.' : ' Ready for baggage belt.');
+                alerta.innerHTML = (isEs
+                    ? '✅ Peso permitido en franquicia (' + peso + ' kg ≤ 23 kg).'
+                    : '✅ Weight within allowance (' + peso + ' kg ≤ 23 kg).') + extra;
             }
         }
 
         function emitirPaseDeAbordar() {
+            var isEs = (currentLang === 'es');
             var nombre = document.getElementById('paxName').value.trim();
             var tipoDoc = document.getElementById('docType').value;
             var numDoc = document.getElementById('paxDoc').value.trim();
@@ -1359,109 +1772,125 @@
 
             if (!nombre || !numDoc) {
                 playTone('danger');
-                alert('⚠️ Por favor ingrese el Nombre y Número de Documento del pasajero.');
+                alert(isEs
+                    ? '⚠️ Por favor ingrese el Nombre y Número de Documento del pasajero.'
+                    : '⚠️ Please enter the Passenger Name and ID Number.');
                 return;
             }
 
             if (!document.getElementById('docCheck1').checked || !document.getElementById('docCheck2').checked) {
                 playTone('danger');
-                alert('🚨 ERROR DOCUMENTAL: Debe verificar que el documento físico esté vigente y coincida con la reserva.');
+                alert(isEs
+                    ? '🚨 ERROR DOCUMENTAL: Debe verificar que el documento físico esté vigente y coincida con la reserva.'
+                    : '🚨 DOCUMENT ERROR: You must verify the physical ID is valid and matches the booking.');
                 return;
             }
 
-            // Validación estricta de Servicios Especiales (SSR)
             if (ssr !== 'NONE') {
-                // Evitar salida de emergencia para pasajeros especiales
                 if (silla === '16A') {
                     playTone('danger');
-                    alert('🚨 RESTRICCIÓN DE SILLA (RAC / OACI): Un pasajero con servicio especial (' + ssr + ') NO puede ocupar la fila de Salida de Emergencia (16A). Por favor cambie la silla asignada.');
+                    alert(isEs
+                        ? '🚨 RESTRICCIÓN DE SILLA (RAC / OACI): Un pasajero con servicio especial (' + ssr + ') NO puede ocupar la fila de Salida de Emergencia (16A). Por favor cambie la silla asignada.'
+                        : '🚨 SEAT RESTRICTION (RAC / ICAO): A passenger with special service (' + ssr + ') CANNOT sit in Emergency Exit Row (16A). Please change seat.');
                     return;
                 }
 
-                // Verificar campos específicos obligatorios
                 if (ssr === 'UMNR') {
                     var dropVal = document.getElementById('dyn_dropName').value.trim();
                     var pickVal = document.getElementById('dyn_pickupName').value.trim();
                     if (!dropVal || !pickVal) {
                         playTone('danger');
-                        alert('🚨 BLOQUEO UMNR: Debe registrar quién entrega en Bogotá y quién recibe en Pasto antes de emitir el pase.');
+                        alert(isEs
+                            ? '🚨 BLOQUEO UMNR: Debe registrar quién entrega en Bogotá y quién recibe en Pasto antes de emitir el pase.'
+                            : '🚨 UMNR HOLD: You must register both drop-off (BOG) and pick-up (PSO) contacts before issuing the pass.');
                         return;
                     }
                 } else if (ssr === 'MINOR_ACC') {
                     var adultVal = document.getElementById('dyn_adultName').value.trim();
                     if (!adultVal) {
                         playTone('danger');
-                        alert('🚨 BLOQUEO MENOR: Debe registrar el nombre del adulto responsable.');
+                        alert(isEs
+                            ? '🚨 BLOQUEO MENOR: Debe registrar el nombre del adulto responsable.'
+                            : '🚨 MINOR HOLD: Please enter the responsible adult full name.');
                         return;
                     }
                 } else if (ssr === 'PETC' || ssr === 'AVIH') {
                     var petVal = document.getElementById('dyn_petInfo').value.trim();
                     if (!petVal) {
                         playTone('danger');
-                        alert('🚨 BLOQUEO MASCOTA: Debe ingresar los datos de la mascota.');
+                        alert(isEs
+                            ? '🚨 BLOQUEO MASCOTA: Debe ingresar los datos de la mascota.'
+                            : '🚨 PET HOLD: Please enter the pet details.');
                         return;
                     }
                 } else if (ssr === 'MEDA') {
                     var condVal = document.getElementById('dyn_condition').value.trim();
                     if (!condVal) {
                         playTone('danger');
-                        alert('🚨 BLOQUEO MÉDICO: Debe especificar la condición o estado de embarazo.');
+                        alert(isEs
+                            ? '🚨 BLOQUEO MÉDICO: Debe especificar la condición o estado de embarazo.'
+                            : '🚨 MEDICAL HOLD: Please specify the medical or pregnancy condition.');
                         return;
                     }
                 }
 
-                // Verificar que la casilla de autorización final esté marcada
                 var clearanceChk = document.getElementById('ssrClearanceCheck');
                 if (!clearanceChk || !clearanceChk.checked) {
                     playTone('danger');
-                    alert('⛔ PASE DE ABORDAR BLOQUEADO: El pasajero aún no cumple o no se ha verificado la documentación/certificados del servicio especial.\n\nPor favor verifique los documentos y marque la casilla de autorización en el Paso 2 para poder emitir el pase.');
+                    alert(isEs
+                        ? '⛔ PASE DE ABORDAR BLOQUEADO: El pasajero aún no cumple o no se ha verificado la documentación/certificados del servicio especial.\n\nPor favor verifique los documentos y marque la casilla de autorización en el Paso 2 para poder emitir el pase.'
+                        : '⛔ BOARDING PASS BLOCKED: Special service documents/certificates have not been verified yet.\n\nPlease verify all documents and check the flight clearance box in Step 2 to issue the boarding pass.');
                     return;
                 }
             }
 
             if (!document.getElementById('q1').checked || !document.getElementById('q2').checked || !document.getElementById('q3').checked) {
                 playTone('danger');
-                alert('🚨 ALERTA DE SEGURIDAD DGR: El pasajero debe confirmar las preguntas de mercancías peligrosas.');
+                alert(isEs
+                    ? '🚨 ALERTA DE SEGURIDAD DGR: El pasajero debe confirmar las preguntas de mercancías peligrosas.'
+                    : '🚨 DGR SECURITY ALERT: Passenger must confirm all dangerous goods declarations.');
                 return;
             }
 
             if (tipoBag !== 'Sin Equipaje Bodega' && tipoBag !== 'Coche Bebé / Silla Ruedas' && peso > 32) {
                 playTone('danger');
-                alert('🚨 EQUIPAJES > 32 KG PROHIBIDOS: Debe reducir el peso de la maleta.');
+                alert(isEs
+                    ? '🚨 EQUIPAJES > 32 KG PROHIBIDOS: Debe reducir el peso de la maleta.'
+                    : '🚨 BAGS > 32 KG PROHIBITED: Suitcase weight must be reduced.');
                 return;
             }
 
-            var notasCabina = 'Pasajero estándar sin novedades a bordo.';
+            var notasCabina = isEs ? 'Pasajero estándar sin novedades a bordo.' : 'Standard passenger, no special remarks.';
             var moodEl = document.getElementById('dyn_mood');
-            var moodVal = moodEl ? moodEl.value : 'Tranquilo';
+            var moodVal = moodEl ? moodEl.value : 'Calm';
 
             if (ssr === 'UMNR') {
                 var drop = document.getElementById('dyn_dropName').value;
                 var pick = document.getElementById('dyn_pickupName').value;
-                notasCabina = '[UMNR VERIFICADO] Entrega: ' + drop + ' | Recibe: ' + pick + ' | Ánimo: ' + moodVal;
+                notasCabina = '[UMNR VERIFIED] Drop-off: ' + drop + ' | Pick-up: ' + pick + ' | Mood: ' + moodVal;
             } else if (ssr === 'MINOR_ACC') {
                 var adult = document.getElementById('dyn_adultName').value;
-                notasCabina = '[Menor Acompañado VERIFICADO] Con: ' + adult + ' | Ánimo: ' + moodVal;
+                notasCabina = '[Accompanied Minor VERIFIED] Guardian: ' + adult + ' | Mood: ' + moodVal;
             } else if (ssr === 'PETC') {
                 var pet = document.getElementById('dyn_petInfo').value;
-                notasCabina = '[PETC Cabina VERIFICADO] ' + pet + ' | Vacunas OK | Estado: ' + moodVal;
+                notasCabina = '[PETC Cabin VERIFIED] ' + pet + ' | Vaccines OK | Status: ' + moodVal;
             } else if (ssr === 'AVIH') {
                 var petB = document.getElementById('dyn_petInfo').value;
-                notasCabina = '[AVIH Bodega VERIFICADO] ' + petB + ' | Guacal IATA & Vacunas OK';
+                notasCabina = '[AVIH Hold VERIFIED] ' + petB + ' | IATA Kennel & Vaccines OK';
             } else if (ssr === 'MEDA') {
                 var cond = document.getElementById('dyn_condition').value;
                 var weeksEl = document.getElementById('dyn_pregWeeks');
-                var weeksText = (weeksEl && weeksEl.value) ? ' (' + weeksEl.value + ' semanas gestación - Cert. Médico Verificado)' : ' (Certificado Médico Verificado)';
-                notasCabina = '[MEDA AUTORIZADO] ' + cond + weeksText + ' | Estado: ' + moodVal;
+                var weeksText = (weeksEl && weeksEl.value) ? ' (' + weeksEl.value + ' weeks gestation - Med Cert Verified)' : ' (Med Cert Verified)';
+                notasCabina = '[MEDA CLEARED] ' + cond + weeksText + ' | Status: ' + moodVal;
             } else if (ssr === 'WCHR') {
-                notasCabina = '[WCHR VERIFICADO] ' + moodVal;
+                notasCabina = '[WCHR CLEARED] ' + moodVal;
             }
 
             var numTag = Math.floor(10000 + Math.random() * 90000);
-            var tagStr = tipoBag === 'Sin Equipaje Bodega' ? 'SIN EQUIPAJE BODEGA' : 'LA-4120-' + numTag;
+            var tagStr = tipoBag === 'Sin Equipaje Bodega' ? 'NO CHECKED BAG' : 'LA-4286-' + numTag;
             document.getElementById('bagTagCode').innerText = '🏷️ BAG TAG: ' + tagStr;
 
-            var ssrTexto = ssr === 'NONE' ? 'ESTÁNDAR' : (ssr === 'MINOR_ACC' ? 'MENOR (ACOMP)' : ssr);
+            var ssrTexto = ssr === 'NONE' ? (isEs ? 'ESTÁNDAR' : 'STANDARD') : (ssr === 'MINOR_ACC' ? 'MINOR (ACC)' : ssr);
 
             var pasajero = {
                 name: nombre.toUpperCase(),
@@ -1469,7 +1898,7 @@
                 pnr: pnr,
                 seat: silla,
                 ssr: ssrTexto,
-                bagText: tipoBag === 'Sin Equipaje Bodega' ? '0 PC (CABINA)' : '1 PC / ' + peso + ' KG',
+                bagText: tipoBag === 'Sin Equipaje Bodega' ? '0 PC (CABIN)' : '1 PC / ' + peso + ' KG',
                 weightNum: tipoBag === 'Sin Equipaje Bodega' ? 0 : peso,
                 tag: tagStr,
                 notes: notasCabina
@@ -1494,7 +1923,7 @@
 
             var secNotas = document.getElementById('bpCabinNotesSection');
             var txtNotas = document.getElementById('bpCabinNotesText');
-            if (pax.ssr !== 'ESTÁNDAR') {
+            if (pax.ssr !== 'ESTÁNDAR' && pax.ssr !== 'STANDARD') {
                 secNotas.style.display = 'block';
                 txtNotas.innerText = pax.notes;
             } else {
@@ -1509,7 +1938,7 @@
 
             for (var i = 0; i < listaPasajeros.length; i++) {
                 var p = listaPasajeros[i];
-                var fila = '<tr class="pax-row" onclick="seleccionarPasajero(' + i + ')" title="Clic para ver su pase de abordar">' +
+                var fila = '<tr class="pax-row" onclick="seleccionarPasajero(' + i + ')">' +
                     '<td><strong>' + p.name + '</strong><br><span style="font-size:0.75rem; color:#64687A;">' + p.doc + '</span></td>' +
                     '<td><span class="ssr-badge-bp" style="font-size:0.7rem;">' + p.ssr + '</span></td>' +
                     '<td><span style="color:var(--latam-coral); font-weight:700;">' + p.seat + '</span></td>' +
@@ -1530,31 +1959,33 @@
             document.getElementById('paxName').value = '';
             document.getElementById('paxDoc').value = '';
             document.getElementById('ssrType').value = 'NONE';
-            actualizarSSR();
+            actualizarSSR(true);
             irAPestana('checkin');
         }
 
         // --- MÓDULO 3: SEGURIDAD AVSEC ---
         function cambiarModoEscanner(modo) {
             modoEscannerActual = modo;
+            var t = i18n[currentLang];
             document.getElementById('modeCabin').classList.remove('active');
             document.getElementById('modePerson').classList.remove('active');
             document.getElementById('modeHold').classList.remove('active');
 
             if (modo === 'cabin') {
                 document.getElementById('modeCabin').classList.add('active');
-                document.getElementById('currentModeLabel').innerText = 'MODO: EQUIPAJE DE MANO';
+                document.getElementById('currentModeLabel').innerText = t.modeLabelCabin;
             } else if (modo === 'person') {
                 document.getElementById('modePerson').classList.add('active');
-                document.getElementById('currentModeLabel').innerText = 'MODO: REVISIÓN PERSONAL / BOLSILLOS';
+                document.getElementById('currentModeLabel').innerText = t.modeLabelPerson;
             } else {
                 document.getElementById('modeHold').classList.add('active');
-                document.getElementById('currentModeLabel').innerText = 'MODO: EQUIPAJE DE BODEGA';
+                document.getElementById('currentModeLabel').innerText = t.modeLabelHold;
             }
             playTone('ok');
         }
 
         function inspeccionarObjeto(itemKey) {
+            var isEs = (currentLang === 'es');
             var status = 'allowed';
             var title = '';
             var subtitle = '';
@@ -1562,119 +1993,145 @@
             var itemName = '';
 
             if (itemKey === 'clean') {
-                itemName = 'Inspección sin novedad';
+                itemName = isEs ? 'Inspección sin novedad' : 'All Clear Screening';
                 status = 'allowed';
-                title = '✅ PASAJERO Y EQUIPAJE AUTORIZADOS';
-                subtitle = 'No se detectan artículos restringidos ni mercancías peligrosas.';
-                protocol = '<strong>ACCIÓN DEL OFICIAL:</strong> Agradecer al pasajero y permitir el paso hacia sala de abordaje (Puerta D14).';
+                title = isEs ? '✅ PASAJERO Y EQUIPAJE AUTORIZADOS' : '✅ PASSENGER & BAGGAGE CLEARED';
+                subtitle = isEs ? 'No se detectan artículos restringidos ni mercancías peligrosas.' : 'No restricted items or dangerous goods detected.';
+                protocol = isEs
+                    ? '<strong>ACCIÓN DEL OFICIAL:</strong> Agradecer al pasajero y permitir el paso hacia sala de abordaje (Puerta D14).'
+                    : '<strong>OFFICER ACTION:</strong> Thank the passenger and clear access to boarding gate (Gate D14).';
             } else if (itemKey === 'metal_pocket') {
-                itemName = 'Objetos metálicos cotidianos';
+                itemName = isEs ? 'Objetos metálicos cotidianos' : 'Everyday metal items';
                 status = 'allowed';
-                title = '✅ ARTÍCULO INOFENSIVO - PERMITIDO';
-                subtitle = 'Detectado en revisión manual / arco detector.';
-                protocol = '<strong>ACCIÓN DEL OFICIAL:</strong> Verificar visualmente que no oculte arma blanca y continuar.';
+                title = isEs ? '✅ ARTÍCULO INOFENSIVO - PERMITIDO' : '✅ HARMLESS ITEM - ALLOWED';
+                subtitle = isEs ? 'Detectado en revisión manual / arco detector.' : 'Detected during manual screening / walk-through metal detector.';
+                protocol = isEs
+                    ? '<strong>ACCIÓN DEL OFICIAL:</strong> Verificar visualmente que no oculte arma blanca y continuar.'
+                    : '<strong>OFFICER ACTION:</strong> Visually verify no concealed sharp weapon and proceed.';
             } else if (itemKey === 'laptop') {
-                itemName = 'Computador Portátil / Tablet';
+                itemName = isEs ? 'Computador Portátil / Tablet' : 'Laptop / Tablet';
                 if (modoEscannerActual === 'hold') {
                     status = 'restricted';
-                    title = '⚠️ RESTRICCIÓN EN BODEGA (BATERÍA DE LITIO)';
-                    subtitle = 'Los dispositivos con batería de litio deben viajar preferiblemente en cabina.';
-                    protocol = '<strong>PROTOCOLO:</strong> Verificar que esté completamente apagado o solicitar llevarlo en cabina.';
+                    title = isEs ? '⚠️ RESTRICCIÓN EN BODEGA (BATERÍA DE LITIO)' : '⚠️ HOLD RESTRICTION (LITHIUM BATTERY)';
+                    subtitle = isEs ? 'Los dispositivos con batería de litio deben viajar preferiblemente en cabina.' : 'Devices containing lithium batteries should travel in cabin baggage.';
+                    protocol = isEs
+                        ? '<strong>PROTOCOLO:</strong> Verificar que esté completamente apagado o solicitar llevarlo en cabina.'
+                        : '<strong>PROTOCOL:</strong> Verify device is completely switched off or ask passenger to carry it in cabin.';
                 } else {
                     status = 'allowed';
-                    title = '✅ PERMITIDO EN EQUIPAJE DE MANO';
-                    subtitle = 'Equipo electrónico de uso personal autorizado.';
-                    protocol = '<strong>ACCIÓN:</strong> Sacar de la maleta para pasarlo en bandeja separada.';
+                    title = isEs ? '✅ PERMITIDO EN EQUIPAJE DE MANO' : '✅ ALLOWED IN CARRY-ON';
+                    subtitle = isEs ? 'Equipo electrónico de uso personal autorizado.' : 'Personal electronic device authorized.';
+                    protocol = isEs
+                        ? '<strong>ACCIÓN:</strong> Sacar de la maleta para pasarlo en bandeja separada.'
+                        : '<strong>ACTION:</strong> Remove from bag and place in a separate X-ray tray.';
                 }
             } else if (itemKey === 'liquids_ok') {
-                itemName = 'Líquidos/Geles ≤ 100 ml';
+                itemName = isEs ? 'Líquidos/Geles ≤ 100 ml' : 'Liquids/Gels ≤ 100 ml';
                 status = 'allowed';
-                title = '✅ PERMITIDO (CUMPLE REGLA DE LÍQUIDOS)';
-                subtitle = 'Envase individual igual o menor a 100 ml.';
-                protocol = '<strong>ACCIÓN:</strong> Autorizado para continuar a cabina.';
+                title = isEs ? '✅ PERMITIDO (CUMPLE REGLA DE LÍQUIDOS)' : '✅ ALLOWED (COMPLIES WITH LAGs RULE)';
+                subtitle = isEs ? 'Envase individual igual o menor a 100 ml.' : 'Individual container 100 ml or less.';
+                protocol = isEs ? '<strong>ACCIÓN:</strong> Autorizado para continuar a cabina.' : '<strong>ACTION:</strong> Cleared to proceed to cabin.';
             } else if (itemKey === 'liquids_big') {
-                itemName = 'Líquidos/Aerosoles > 100 ml';
+                itemName = isEs ? 'Líquidos/Aerosoles > 100 ml' : 'Liquids/Aerosols > 100 ml';
                 if (modoEscannerActual === 'hold') {
                     status = 'allowed';
-                    title = '✅ PERMITIDO EN EQUIPAJE DE BODEGA';
-                    subtitle = 'Líquidos mayores a 100 ml autorizados facturados en bodega.';
-                    protocol = '<strong>ACCIÓN:</strong> Autorizado en bodega.';
+                    title = isEs ? '✅ PERMITIDO EN EQUIPAJE DE BODEGA' : '✅ ALLOWED IN CHECKED BAGGAGE';
+                    subtitle = isEs ? 'Líquidos mayores a 100 ml autorizados facturados en bodega.' : 'Liquids over 100 ml authorized in checked baggage.';
+                    protocol = isEs ? '<strong>ACCIÓN:</strong> Autorizado en bodega.' : '<strong>ACTION:</strong> Authorized in hold.';
                 } else {
                     status = 'restricted';
-                    title = '⚠️ RESTRINGIDO EN CABINA (> 100 ML)';
-                    subtitle = 'Prohibido ingresar envases mayores a 100 ml a sala de embarque.';
-                    protocol = '<strong>PROTOCOLO:</strong> (a) Facturar en bodega, (b) Dejar con acompañante, o (c) Desechar en contenedor.';
+                    title = isEs ? '⚠️ RESTRINGIDO EN CABINA (> 100 ML)' : '⚠️ RESTRICTED IN CABIN (> 100 ML)';
+                    subtitle = isEs ? 'Prohibido ingresar envases mayores a 100 ml a sala de embarque.' : 'Containers over 100 ml are prohibited in sterile boarding area.';
+                    protocol = isEs
+                        ? '<strong>PROTOCOLO:</strong> (a) Facturar en bodega, (b) Dejar con acompañante, o (c) Desechar en contenedor.'
+                        : '<strong>PROTOCOL:</strong> (a) Check into hold, (b) Leave with companion, or (c) Dispose in security bin.';
                 }
             } else if (itemKey === 'powerbank') {
-                itemName = 'Batería de Litio / Power Bank / Vapeador';
+                itemName = isEs ? 'Batería de Litio / Power Bank / Vapeador' : 'Lithium Battery / Power Bank / Vape';
                 if (modoEscannerActual === 'hold') {
                     status = 'prohibited';
-                    title = '🚨 PROHIBIDO EN BODEGA (MERCANCÍA PELIGROSA)';
-                    subtitle = 'Riesgo crítico de incendio térmico en bodega.';
-                    protocol = '<strong>PROTOCOLO IATA DGR:</strong> Retirar inmediatamente de la maleta. El pasajero DEBE llevarlo en cabina.';
+                    title = isEs ? '🚨 PROHIBIDO EN BODEGA (MERCANCÍA PELIGROSA)' : '🚨 PROHIBITED IN HOLD (DANGEROUS GOODS)';
+                    subtitle = isEs ? 'Riesgo crítico de incendio térmico en bodega.' : 'Critical thermal runaway fire hazard in cargo hold.';
+                    protocol = isEs
+                        ? '<strong>PROTOCOLO IATA DGR:</strong> Retirar inmediatamente de la maleta. El pasajero DEBE llevarlo en cabina.'
+                        : '<strong>IATA DGR PROTOCOL:</strong> Remove immediately from checked bag. Passenger MUST carry it in cabin.';
                 } else {
                     status = 'allowed';
-                    title = '✅ PERMITIDO SOLO EN CABINA';
-                    subtitle = 'Ubicación correcta: Baterías de litio sueltas solo van en cabina.';
-                    protocol = '<strong>ACCIÓN:</strong> Recordar prohibición de usar o cargar vapeadores a bordo.';
+                    title = isEs ? '✅ PERMITIDO SOLO EN CABINA' : '✅ ALLOWED IN CABIN ONLY';
+                    subtitle = isEs ? 'Ubicación correcta: Baterías de litio sueltas solo van en cabina.' : 'Correct placement: Spare lithium batteries allowed in cabin only.';
+                    protocol = isEs
+                        ? '<strong>ACCIÓN:</strong> Recordar prohibición de usar o cargar vapeadores a bordo.'
+                        : '<strong>ACTION:</strong> Remind passenger that using or charging vapes onboard is strictly prohibited.';
                 }
             } else if (itemKey === 'scissors_small') {
-                itemName = 'Tijeras / Cortauñas';
+                itemName = isEs ? 'Tijeras / Cortauñas' : 'Scissors / Nail Clipper';
                 if (modoEscannerActual === 'hold') {
                     status = 'allowed';
-                    title = '✅ PERMITIDO EN EQUIPAJE DE BODEGA';
-                    subtitle = 'Autorizado en bodega.';
-                    protocol = '<strong>ACCIÓN:</strong> Puede viajar en bodega.';
+                    title = isEs ? '✅ PERMITIDO EN EQUIPAJE DE BODEGA' : '✅ ALLOWED IN CHECKED BAGGAGE';
+                    subtitle = isEs ? 'Autorizado en bodega.' : 'Authorized in hold.';
+                    protocol = isEs ? '<strong>ACCIÓN:</strong> Puede viajar en bodega.' : '<strong>ACTION:</strong> Cleared for hold.';
                 } else {
                     status = 'restricted';
-                    title = '⚠️ VERIFICAR LONGITUD DE HOJA (MÁX. 6 CM)';
-                    subtitle = 'Tijeras con hoja mayor a 6 cm prohibidas en cabina.';
-                    protocol = '<strong>PROTOCOLO:</strong> Si mide menos de 6 cm, permitido. Si mide más, va a bodega o buzón de seguridad.';
+                    title = isEs ? '⚠️ VERIFICAR LONGITUD DE HOJA (MÁX. 6 CM)' : '⚠️ CHECK BLADE LENGTH (MAX. 6 CM)';
+                    subtitle = isEs ? 'Tijeras con hoja mayor a 6 cm prohibidas en cabina.' : 'Scissors with blades over 6 cm prohibited in cabin.';
+                    protocol = isEs
+                        ? '<strong>PROTOCOLO:</strong> Si mide menos de 6 cm, permitido. Si mide más, va a bodega o buzón de seguridad.'
+                        : '<strong>PROTOCOL:</strong> Allowed if under 6 cm. If longer, check into hold or surrender at checkpoint.';
                 }
             } else if (itemKey === 'lighter') {
-                itemName = 'Encendedor / Fósforos';
+                itemName = isEs ? 'Encendedor / Fósforos' : 'Lighter / Matches';
                 if (modoEscannerActual === 'person') {
                     status = 'allowed';
-                    title = '✅ PERMITIDO (1 UNIDAD EN BOLSILLO)';
-                    subtitle = 'Se permite 1 encendedor pequeño de gas llevado con la persona.';
-                    protocol = '<strong>PROTOCOLO:</strong> Prohibido en maletas y prohibidos sopletes.';
+                    title = isEs ? '✅ PERMITIDO (1 UNIDAD EN BOLSILLO)' : '✅ ALLOWED (1 UNIT ON PERSON)';
+                    subtitle = isEs ? 'Se permite 1 encendedor pequeño de gas llevado con la persona.' : '1 small gas lighter permitted carried on person.';
+                    protocol = isEs
+                        ? '<strong>PROTOCOLO:</strong> Prohibido en maletas y prohibidos sopletes.'
+                        : '<strong>PROTOCOL:</strong> Prohibited inside bags; torch/blue-flame lighters are strictly banned.';
                 } else {
                     status = 'restricted';
-                    title = '⚠️ PROHIBIDO DENTRO DEL EQUIPAJE';
-                    subtitle = 'No se permiten encendedores dentro de maletas.';
-                    protocol = '<strong>PROTOCOLO:</strong> Sacar de la maleta y llevar en el bolsillo (máx 1 unidad).';
+                    title = isEs ? '⚠️ PROHIBIDO DENTRO DEL EQUIPAJE' : '⚠️ PROHIBITED INSIDE BAGGAGE';
+                    subtitle = isEs ? 'No se permiten encendedores dentro de maletas.' : 'Lighters are not permitted inside carry-on or checked bags.';
+                    protocol = isEs
+                        ? '<strong>PROTOCOLO:</strong> Sacar de la maleta y llevar en el bolsillo (máx 1 unidad).'
+                        : '<strong>PROTOCOL:</strong> Remove from bag and carry on person (max 1 unit).';
                 }
             } else if (itemKey === 'tools') {
-                itemName = 'Herramientas de Trabajo';
+                itemName = isEs ? 'Herramientas de Trabajo' : 'Work Tools';
                 if (modoEscannerActual === 'hold') {
                     status = 'allowed';
-                    title = '✅ PERMITIDO EN EQUIPAJE DE BODEGA';
-                    subtitle = 'Herramientas manuales autorizadas en bodega.';
-                    protocol = '<strong>ACCIÓN:</strong> Autorizado en bodega.';
+                    title = isEs ? '✅ PERMITIDO EN EQUIPAJE DE BODEGA' : '✅ ALLOWED IN CHECKED BAGGAGE';
+                    subtitle = isEs ? 'Herramientas manuales autorizadas en bodega.' : 'Hand tools authorized in checked baggage.';
+                    protocol = isEs ? '<strong>ACCIÓN:</strong> Autorizado en bodega.' : '<strong>ACTION:</strong> Cleared for hold.';
                 } else {
                     status = 'prohibited';
-                    title = '🚨 PROHIBIDO EN CABINA (OBJETO CONTUNDENTE)';
-                    subtitle = 'Destornilladores o martillos no pueden ir en cabina.';
-                    protocol = '<strong>PROTOCOLO:</strong> Enviar a bodega o retener.';
+                    title = isEs ? '🚨 PROHIBIDO EN CABINA (OBJETO CONTUNDENTE)' : '🚨 PROHIBITED IN CABIN (BLUNT INSTRUMENT)';
+                    subtitle = isEs ? 'Destornilladores o martillos no pueden ir en cabina.' : 'Screwdrivers, wrenches, or hammers banned from cabin.';
+                    protocol = isEs ? '<strong>PROTOCOLO:</strong> Enviar a bodega o retener.' : '<strong>PROTOCOL:</strong> Check into hold or confiscate.';
                 }
             } else if (itemKey === 'knife') {
-                itemName = 'Arma Blanca / Navaja / Bisturí';
+                itemName = isEs ? 'Arma Blanca / Navaja / Bisturí' : 'Knife / Sharp Weapon / Scalpel';
                 status = 'prohibited';
-                title = '🚨 ARTÍCULO PROHIBIDO - RETENCIÓN INMEDIATA';
-                subtitle = 'Objeto cortopunzante peligroso para la aviación civil.';
-                protocol = '<strong>PROTOCOLO AVSEC:</strong> Aislar equipaje, notificar al supervisor y a Policía Aeroportuaria.';
+                title = isEs ? '🚨 ARTÍCULO PROHIBIDO - RETENCIÓN INMEDIATA' : '🚨 PROHIBITED ITEM - IMMEDIATE CONFISCATION';
+                subtitle = isEs ? 'Objeto cortopunzante peligroso para la aviación civil.' : 'Sharp/pointed weapon dangerous to civil aviation.';
+                protocol = isEs
+                    ? '<strong>PROTOCOLO AVSEC:</strong> Aislar equipaje, notificar al supervisor y a Policía Aeroportuaria.'
+                    : '<strong>AVSEC PROTOCOL:</strong> Isolate bag, notify AVSEC supervisor and Airport Police immediately.';
             } else if (itemKey === 'aerosol_flam') {
-                itemName = 'Gas Pimienta / Aerosol Inflamable';
+                itemName = isEs ? 'Gas Pimienta / Aerosol Inflamable' : 'Pepper Spray / Flammable Aerosol';
                 status = 'prohibited';
-                title = '🚨 MERCANCÍA PELIGROSA PROHIBIDA';
-                subtitle = 'Totalmente prohibido tanto en cabina como en bodega.';
-                protocol = '<strong>PROTOCOLO:</strong> Retención inmediata y entrega a Policía Nacional.';
+                title = isEs ? '🚨 MERCANCÍA PELIGROSA PROHIBIDA' : '🚨 PROHIBITED DANGEROUS GOODS';
+                subtitle = isEs ? 'Totalmente prohibido tanto en cabina como en bodega.' : 'Strictly prohibited in both cabin and checked baggage.';
+                protocol = isEs
+                    ? '<strong>PROTOCOLO:</strong> Retención inmediata y entrega a Policía Nacional.'
+                    : '<strong>PROTOCOL:</strong> Immediate seizure and handover to Airport Police.';
             } else if (itemKey === 'toy_gun') {
-                itemName = 'Réplica de Arma de Fuego';
+                itemName = isEs ? 'Réplica de Arma de Fuego' : 'Replica Firearm';
                 status = 'prohibited';
-                title = '🚨 ALERTA MÁXIMA - RÉPLICA DE ARMA';
-                subtitle = 'Prohibido en cabina por riesgo de interferencia ilícita.';
-                protocol = '<strong>PROTOCOLO:</strong> Notificar de inmediato a Policía Aeroportuaria.';
+                title = isEs ? '🚨 ALERTA MÁXIMA - RÉPLICA DE ARMA' : '🚨 HIGH ALERT - FIREARM REPLICA';
+                subtitle = isEs ? 'Prohibido en cabina por riesgo de interferencia ilícita.' : 'Prohibited in cabin due to unlawful interference risk.';
+                protocol = isEs
+                    ? '<strong>PROTOCOLO:</strong> Notificar de inmediato a Policía Aeroportuaria.'
+                    : '<strong>PROTOCOL:</strong> Notify Airport Police immediately.';
             }
 
             var banner = document.getElementById('scanResultBanner');
@@ -1690,24 +2147,28 @@
         }
 
         function agregarBitacora(item, mode, status) {
+            var isEs = (currentLang === 'es');
             var logBox = document.getElementById('securityLogs');
-            if (logBox.innerText.indexOf('No se han registrado') !== -1 || logBox.innerText.indexOf('reiniciada') !== -1) {
+            if (document.getElementById('emptyLogMsg')) {
                 logBox.innerHTML = '';
             }
             var now = new Date();
             var time = ('0' + now.getHours()).slice(-2) + ':' + ('0' + now.getMinutes()).slice(-2) + ':' + ('0' + now.getSeconds()).slice(-2);
-            var modeText = mode === 'cabin' ? 'Cabina' : (mode === 'person' ? 'Persona' : 'Bodega');
+            var modeText = isEs
+                ? (mode === 'cabin' ? 'Cabina' : (mode === 'person' ? 'Persona' : 'Bodega'))
+                : (mode === 'cabin' ? 'Cabin' : (mode === 'person' ? 'Person' : 'Hold'));
             var badgeClass = 'b-ok';
-            var badgeLabel = 'APROBADO';
-            if (status === 'restricted') { badgeClass = 'b-warn'; badgeLabel = 'RESTRINGIDO'; }
-            if (status === 'prohibited') { badgeClass = 'b-danger'; badgeLabel = 'PROHIBIDO'; }
+            var badgeLabel = isEs ? 'APROBADO' : 'CLEARED';
+            if (status === 'restricted') { badgeClass = 'b-warn'; badgeLabel = isEs ? 'RESTRINGIDO' : 'RESTRICTED'; }
+            if (status === 'prohibited') { badgeClass = 'b-danger'; badgeLabel = isEs ? 'PROHIBIDO' : 'PROHIBITED'; }
 
             var entry = '<div class="log-entry"><div><span style="color:#5BC0BE;">[' + time + ']</span> <strong>' + item + '</strong> <span style="opacity:0.7;">(' + modeText + ')</span></div><span class="badge-mini ' + badgeClass + '">' + badgeLabel + '</span></div>';
             logBox.insertAdjacentHTML('afterbegin', entry);
         }
 
         function limpiarBitacora() {
-            document.getElementById('securityLogs').innerHTML = '<div style="color: #6E7A94; font-style: italic; font-size: 0.82rem;">Bitácora reiniciada...</div>';
+            var msg = i18n[currentLang].emptyLogMsg;
+            document.getElementById('securityLogs').innerHTML = '<div id="emptyLogMsg" style="color: #6E7A94; font-style: italic; font-size: 0.82rem;">' + msg + '</div>';
             playTone('ok');
         }
     </script>
