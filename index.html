@@ -763,7 +763,7 @@
     <header>
         <div class="brand">
             <div class="brand-logo">✈️ LATAM <span>AIRLINES</span></div>
-            <div class="flight-badge" id="flightBadgeText">VUELO LA 4286 | BOG ➔ PSO (Pasto)</div>
+            <div class="flight-badge" id="flightBadgeText">VUELO LA 4288 | BOG ➔ PSO (Pasto)</div>
         </div>
         <div class="header-controls">
             <div class="nav-tabs">
@@ -839,7 +839,7 @@
                         </div>
                         <div class="check-item">
                             <input type="checkbox" id="docCheck2" checked>
-                            <span id="txtDocCheck2">Nombres y apellidos coinciden exactamente con la reserva del vuelo LA 4286 (BOG-PSO).</span>
+                            <span id="txtDocCheck2">Nombres y apellidos coinciden exactamente con la reserva del vuelo LA 4288 (BOG-PSO).</span>
                         </div>
                     </div>
                 </div>
@@ -899,7 +899,7 @@
                     <div id="bagAlert" class="baggage-status ok">✅ Peso permitido en franquicia (15 kg ≤ 23 kg).</div>
                     
                     <div class="bag-tag-preview" id="bagTagPreview">
-                        <span id="bagTagCode">🏷️ BAG TAG: LA-4286</span>
+                        <span id="bagTagCode">🏷️ BAG TAG: LA-4288</span>
                         <span id="bagTagType">MALETA ESTÁNDAR | 15 KG</span>
                     </div>
 
@@ -974,7 +974,7 @@
                                 </div>
                                 <div>
                                     <div class="bp-label" id="bpLblFlight">Vuelo / Flight</div>
-                                    <div class="bp-value">LA 4286 - A320</div>
+                                    <div class="bp-value">LA 4288 - A320</div>
                                 </div>
                                 <div>
                                     <div class="bp-label" id="bpLblGate">Puerta / Gate</div>
@@ -1006,7 +1006,7 @@
                         <div class="bp-footer">
                             <div class="barcode"></div>
                             <div style="text-align: right; font-size: 0.78rem; color: var(--text-muted);">
-                                <strong id="bpTagFooter">TAG: LA-4286-88412</strong><br>
+                                <strong id="bpTagFooter">TAG: LA-4288-88412</strong><br>
                                 <span id="bpFooterHint">Diríjase al filtro de seguridad AVSEC</span>
                             </div>
                         </div>
@@ -1165,7 +1165,7 @@
         // --- DICCIONARIO BILINGÜE ES / EN ---
         var i18n = {
             es: {
-                flightBadge: 'VUELO LA 4286 | BOG ➔ PSO (Pasto)',
+                flightBadge: 'VUELO LA 4288 | BOG ➔ PSO (Pasto)',
                 tabCheckin: '🛂 1. Counter & Check-in',
                 tabBoarding: '🎟️ 2. Boarding Pass',
                 tabAvsec: '🛡️ 3. Filtro Seguridad & Rayos X (AVSEC)',
@@ -1189,7 +1189,7 @@
                 optSeat6: '21D (Pasillo)',
                 lblAgentDocCheck: '✔️ Validación Documental del Agente:',
                 txtDocCheck1: 'Documento físico original en buen estado y fotografía coincide con el pasajero.',
-                txtDocCheck2: 'Nombres y apellidos coinciden exactamente con la reserva del vuelo LA 4286 (BOG-PSO).',
+                txtDocCheck2: 'Nombres y apellidos coinciden exactamente con la reserva del vuelo LA 4288 (BOG-PSO).',
                 step2Title: '♿🐾👶 2. Servicios Especiales (SSR) y Perfil del Pasajero',
                 step2Badge: 'PASO 2',
                 lblSsrSelect: 'Seleccione si el pasajero requiere atención o protocolo especial:',
@@ -1264,7 +1264,7 @@
                 modeLabelHold: 'MODO: EQUIPAJE DE BODEGA'
             },
             en: {
-                flightBadge: 'FLIGHT LA 4286 | BOG ➔ PSO (Pasto)',
+                flightBadge: 'FLIGHT LA 4288 | BOG ➔ PSO (Pasto)',
                 tabCheckin: '🛂 1. Counter & Check-in',
                 tabBoarding: '🎟️ 2. Boarding Pass',
                 tabAvsec: '🛡️ 3. Security Screening & X-Ray (AVSEC)',
@@ -1288,7 +1288,7 @@
                 optSeat6: '21D (Aisle)',
                 lblAgentDocCheck: '✔️ Agent Document Validation:',
                 txtDocCheck1: 'Original physical ID in good condition and photo matches the passenger.',
-                txtDocCheck2: 'First and last names match the booking for flight LA 4286 (BOG-PSO) exactly.',
+                txtDocCheck2: 'First and last names match the booking for flight LA 4288 (BOG-PSO) exactly.',
                 step2Title: '♿🐾👶 2. Special Services (SSR) & Passenger Profile',
                 step2Badge: 'STEP 2',
                 lblSsrSelect: 'Select if the passenger requires special assistance or protocol:',
@@ -1887,7 +1887,7 @@
             }
 
             var numTag = Math.floor(10000 + Math.random() * 90000);
-            var tagStr = tipoBag === 'Sin Equipaje Bodega' ? 'NO CHECKED BAG' : 'LA-4286-' + numTag;
+            var tagStr = tipoBag === 'Sin Equipaje Bodega' ? 'NO CHECKED BAG' : 'LA-4288-' + numTag;
             document.getElementById('bagTagCode').innerText = '🏷️ BAG TAG: ' + tagStr;
 
             var ssrTexto = ssr === 'NONE' ? (isEs ? 'ESTÁNDAR' : 'STANDARD') : (ssr === 'MINOR_ACC' ? 'MINOR (ACC)' : ssr);
