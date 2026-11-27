@@ -857,7 +857,7 @@
                             <option value="NONE" id="optSsrNone">Pasajero Estándar (Sin requerimientos especiales)</option>
                             <option value="MINOR_ACC" id="optSsrMinor">👶 Menor de Edad Acompañado (Con padres / familiar)</option>
                             <option value="UMNR" id="optSsrUmnr">🧒 Menor Sin Acompañar (Servicio UMNR - 5 a 17 años)</option>
-                            <option value="PETC" id="optSsrPetc">🐶 Mascota en Cabina (PETC - Perro o Gato pequeño)</option>
+                            <option value="PETC" id="optSsrPetc">🐶 Mascota en Cabina (ESA - Mascota de soporte emocional)</option>
                             <option value="AVIH" id="optSsrAvih">🐕‍🦺 Mascota en Bodega (AVIH - Guacal rígido)</option>
                             <option value="WCHR" id="optSsrWchr">♿ Movilidad Reducida / Silla de Ruedas (WCHR)</option>
                             <option value="MEDA" id="optSsrMeda">🤰 Embarazada / Condición Médica o Sensorial (TEA/Visual)</option>
@@ -899,7 +899,7 @@
                     <div id="bagAlert" class="baggage-status ok">✅ Peso permitido en franquicia (15 kg ≤ 23 kg).</div>
                     
                     <div class="bag-tag-preview" id="bagTagPreview">
-                        <span id="bagTagCode">🏷️ BAG TAG: LA-4286-88412</span>
+                        <span id="bagTagCode">🏷️ BAG TAG: LA-4286</span>
                         <span id="bagTagType">MALETA ESTÁNDAR | 15 KG</span>
                     </div>
 
@@ -974,7 +974,7 @@
                                 </div>
                                 <div>
                                     <div class="bp-label" id="bpLblFlight">Vuelo / Flight</div>
-                                    <div class="bp-value">LA 4286</div>
+                                    <div class="bp-value">LA 4286 - A320</div>
                                 </div>
                                 <div>
                                     <div class="bp-label" id="bpLblGate">Puerta / Gate</div>
@@ -1645,7 +1645,7 @@
                     '</div>';
             } else if (ssr === 'PETC') {
                 htmlProtocolo = isEs
-                    ? '<h4>🐶 Protocolo: Mascota en Cabina (Código: PETC)</h4><ul><li><strong>Guacal:</strong> Blando, ventilado, bajo el asiento delantero (máx 10 kg).</li><li><strong>Sanidad:</strong> Verificar carné de vacunación vigente (rabia) y certificado de salud (máx. 10 días).</li></ul>'
+                    ? '<h4>🐶 Protocolo: Mascota de soporte emocional (Código: ESA)</h4><ul><li><strong>Guacal:</strong> Blando, ventilado, bajo el asiento delantero (máx 10 kg).</li><li><strong>Sanidad:</strong> Verificar carné de vacunación vigente (rabia) y certificado de salud (máx. 10 días).</li></ul>'
                     : '<h4>🐶 Protocol: Pet in Cabin (Code: PETC)</h4><ul><li><strong>Carrier:</strong> Soft-sided, ventilated, fits under front seat (max 10 kg).</li><li><strong>Health:</strong> Verify valid rabies vaccination card and vet health certificate (max. 10 days).</li></ul>';
                 title.innerText = isEs ? '📝 Validación Sanitaria de Mascota (Cabina)' : '📝 Cabin Pet Health Validation';
                 textoAutorizacion = isEs
